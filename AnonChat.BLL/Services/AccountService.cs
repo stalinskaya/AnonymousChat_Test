@@ -55,8 +55,6 @@ namespace AnonChat.BLL.Services
                     if (!result.Succeeded)
                         return null;
 
-                    await UserManager.AddToRoleAsync(user, "member");
-
                     var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
                     var encode = HttpUtility.UrlEncode(code);
                     var callbackUrl = new StringBuilder("http://")
@@ -114,15 +112,14 @@ namespace AnonChat.BLL.Services
                 && await UserManager.CheckPasswordAsync(user, password)
                 && await UserManager.IsEmailConfirmedAsync(user))
             {
-                var role = await UserManager.GetRolesAsync(user);
+     
                 var options = new IdentityOptions();
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new Claim("UserID",user.Id.ToString()),
-                        new Claim(options.ClaimsIdentity.RoleClaimType,role.FirstOrDefault())
+                        new Claim("UserID",user.Id.ToString())
                     }),
                     Expires = DateTime.UtcNow.AddDays(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(applicationSettings.JWT_Secret)), SecurityAlgorithms.HmacSha256Signature)

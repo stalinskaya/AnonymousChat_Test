@@ -27,20 +27,14 @@ namespace AnonChat.UI.Controllers
             _appEnvironment = hostingEnvironment;
         }
 
-        [Authorize
-        //(Roles = "Admin")
-        ]
         public IEnumerable<ApplicationUser> Get()
         {
             return accountService.GetUsers();
         }
 
-        [Authorize
-        //(Roles = "Admin")
-        ]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ApplicationUser), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Get(string id)
         {
             var user = accountService.FindUserById(id);
