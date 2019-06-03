@@ -46,7 +46,7 @@ namespace AnonChat.UI.Controllers
         }
 
         [HttpPost, Route("Register")]
-        public async Task<object> Register([FromForm]RegisterViewModel model)
+        public async Task<object> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -56,7 +56,10 @@ namespace AnonChat.UI.Controllers
                 Email = model.Email,
                 UserName = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                Sex = model.Sex,
+                Age= model.Age,
+                StatusSearch = false
             };
 
             var url = HttpContext.Request.Host.ToString();
@@ -85,12 +88,12 @@ namespace AnonChat.UI.Controllers
         [HttpPost]
         [Route("Login")]
         //POST : /api/ApplicationUser/Login
-        public async Task<IActionResult> Login([FromForm]LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             var user = new ApplicationUser
             {
-                Email = model.Email,
-                UserName = model.Email
+                Email = model.UserName,
+                UserName = model.UserName
             };
             var token = await accountService.Login(user, model.Password);
             if (token != null)

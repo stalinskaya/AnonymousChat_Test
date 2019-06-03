@@ -114,12 +114,11 @@ namespace AnonChat.UI
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCors(builder =>
 
-            builder.WithOrigins(Configuration["ApplicationSettings:Client_URL"].ToString())
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            );
+            app.UseCors(options =>
+               options.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader());
 
             app.UseAuthentication();
             app.UseCookiePolicy();
