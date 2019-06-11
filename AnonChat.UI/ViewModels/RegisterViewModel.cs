@@ -17,12 +17,12 @@ namespace AnonChat.UI.ViewModels
         public string LastName { get; set; }
 
         [Required]
-        [Display(Name = "Возраст")]
-        public int Age { get; set; }
+        [Display(Name = "Дата рождения")]
+        public DateTime Birthday { get; set; }
 
         [Required]
         [Display(Name = "Пол")]
-        public string Sex { get; set; }
+        public string Gender { get; set; }
 
         [Required]
         [EmailAddress]

@@ -57,8 +57,8 @@ namespace AnonChat.UI.Controllers
                 UserName = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Sex = model.Sex,
-                Age= model.Age,
+                Gender = model.Gender,
+                BirthDay= model.Birthday,
                 StatusSearch = false
             };
 

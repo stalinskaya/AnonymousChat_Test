@@ -9,8 +9,17 @@ namespace AnonChat.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Sex { get; set; }
-        public int Age { get; set; }
+        public DateTime BirthDay { get; set; }
+        public string Gender { get; set; }
+
+        public virtual ICollection<ChatMessage> SendedMessages { get; set; }
+        public virtual ICollection<ChatMessage> ReceivedMessages { get; set; }
         public bool StatusSearch { get; set; }
+        public DateTime StartSearch { get; set; }
+        public ApplicationUser()
+        {
+            SendedMessages = new List<ChatMessage>();
+            ReceivedMessages = new List<ChatMessage>();
+        }
     }
 }

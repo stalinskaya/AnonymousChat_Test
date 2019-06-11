@@ -8,6 +8,7 @@ namespace AnonChat.DAL.Interfaces
 {
     public interface IUnitOfWork
     {
+        IRepository<ChatMessage> ChatMessages { get; }
         IRepository<ApplicationUser> Users { get; }
         IRepository<LogDetail> LogDetails { get; }
 

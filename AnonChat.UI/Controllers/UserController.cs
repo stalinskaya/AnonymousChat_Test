@@ -32,7 +32,27 @@ namespace AnonChat.UI.Controllers
                 user.FirstName,
                 user.LastName,
                 user.Email,
-                user.UserName
+                user.UserName,
+                user.BirthDay,
+                user.Gender
+            };
+        }
+
+        [HttpPut]
+        [Authorize]
+        //GET : /api/UserProfile
+        public async Task<Object> ChangeUserProfile()
+        {
+            string userId = User.Claims.First(c => c.Type == "UserID").Value;
+            var user = await accountService.FindUserById(userId);
+            return new
+            {
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.UserName,
+                user.BirthDay,
+                user.Gender
             };
         }
     }

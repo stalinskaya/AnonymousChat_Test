@@ -13,8 +13,8 @@ export class UserService {
   formModel = this.fb.group({
     FirstName: ['', Validators.required],
     LastName: ['', Validators.required],
-    Sex: ['', Validators.required],
-    Age: ['', Validators.required],
+    Gender: ['', Validators.required],
+    Birthday: ['', Validators.required],
     Email: ['', Validators.email],
     Passwords: this.fb.group({
       Password: ['', [Validators.required]],
@@ -39,8 +39,8 @@ export class UserService {
     var body = {
       FirstName: this.formModel.value.FirstName,
       LastName: this.formModel.value.LastName,
-      Sex: this.formModel.value.Sex,
-      Age: this.formModel.value.Age,
+      Gender: this.formModel.value.Sex,
+      Birthday: this.formModel.value.Age,
       Email: this.formModel.value.Email,
       Password: this.formModel.value.Passwords.Password,
       PasswordConfirm: this.formModel.value.Passwords.ConfirmPassword

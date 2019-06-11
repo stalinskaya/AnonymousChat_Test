@@ -45,8 +45,8 @@ namespace AnonChat.BLL.Services
                     UserName = newUser.Email,
                     FirstName = newUser.FirstName,
                     LastName = newUser.LastName,
-                    Sex = newUser.Sex,
-                    Age = newUser.Age,
+                    Gender = newUser.Gender,
+                    BirthDay = newUser.BirthDay,
                     StatusSearch = false
                 };
                 try

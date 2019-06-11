@@ -47,7 +47,7 @@ namespace AnonChat.UI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<ChatContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("ChatContext")));
+            options.UseMySql(Configuration.GetConnectionString("ChatContext")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -67,9 +67,11 @@ namespace AnonChat.UI
             }
             );
 
+            
             services.AddScoped<AnonChat.DAL.Interfaces.IUnitOfWork, AnonChat.DAL.Repositories.EFUnitOfWork>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IChatService, ChatService>();
 
 
             services.AddCors();
