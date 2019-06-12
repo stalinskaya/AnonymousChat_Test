@@ -39,8 +39,8 @@ export class UserService {
     var body = {
       FirstName: this.formModel.value.FirstName,
       LastName: this.formModel.value.LastName,
-      Gender: this.formModel.value.Sex,
-      Birthday: this.formModel.value.Age,
+      Gender: this.formModel.value.Gender,
+      Birthday: this.formModel.value.Birthday,
       Email: this.formModel.value.Email,
       Password: this.formModel.value.Passwords.Password,
       PasswordConfirm: this.formModel.value.Passwords.ConfirmPassword

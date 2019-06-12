@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.component.html',
-  styles: []
+  styles: ["node_modules/bootstrap/dist/css/bootstrap.min.css"]
 })
 export class RegistrationComponent implements OnInit {
 
@@ -41,4 +41,7 @@ export class RegistrationComponent implements OnInit {
     );
   }
 
+}
+export class NgbdDatepickerPopup {
+  model;
 }

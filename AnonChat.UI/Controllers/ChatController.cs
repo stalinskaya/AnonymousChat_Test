@@ -18,8 +18,6 @@ namespace AnonChat.UI.Controllers
     {
         public readonly IAccountService accountService;
         public readonly IChatService chatService;
-
-
         public ChatController (IAccountService accountService)
         {
             this.accountService = accountService;
