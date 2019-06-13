@@ -98,7 +98,7 @@ namespace AnonChat.UI
                     ClockSkew = TimeSpan.Zero
                 };
             });
-
+            //services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -125,6 +125,10 @@ namespace AnonChat.UI
             app.UseAuthentication();
             app.UseCookiePolicy();
             app.UseMvc();
+            //app.UseSignalR(routes =>
+            //{
+            //    routes.MapHub<ChatHub>("chat");
+            //});
         }
     }
 }

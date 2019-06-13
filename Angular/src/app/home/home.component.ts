@@ -30,25 +30,14 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/user/login']);
   }
 
+  onProfile() {
+    this.router.navigate(['/profile']);
+  }
+
   onSubmit() {
     this.service.search().subscribe(
       (res: any) => {
-        if (res.succeeded) {
           this.service.formModel.reset();
-          this.toastr.success('Search successful', 'Search successful.');
-        } else {
-          res.errors.forEach(element => {
-            switch (element.code) {
-              case 'DuplicateUserName':
-                this.toastr.error('Username is already taken','Registration failed.');
-                break;
-
-              default:
-              this.toastr.error(element.description,'Search failed.');
-                break;
-            }
-          });
-        }
       },
       err => {
         console.log(err);

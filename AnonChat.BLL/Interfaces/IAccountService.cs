@@ -19,5 +19,6 @@ namespace AnonChat.BLL.Interfaces
         Task<OperationDetails> CheckPassword(ApplicationUser user, string password);
         IEnumerable<ApplicationUser> GetUsers();
         Task<OperationDetails> Exit();
+        void EditUserStatus(ApplicationUser user, bool status);
     }
 }

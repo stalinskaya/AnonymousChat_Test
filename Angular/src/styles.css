@@ -84,7 +84,7 @@ div.form-group.required>label:first-child:after{
   }
 
   form{
-      margin: 0px 16px;
+      margin: 16px 16px;
   }
 
  div.form-group input.invalid{

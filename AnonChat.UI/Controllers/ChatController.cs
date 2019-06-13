@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using AnonChat.BLL.Interfaces;
 using AnonChat.Models;
 using AnonChat.UI.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +19,7 @@ namespace AnonChat.UI.Controllers
     [ApiController]
     public class ChatController : ControllerBase
     {
+
         public readonly IAccountService accountService;
         public readonly IChatService chatService;
         public ChatController (IAccountService accountService)
@@ -83,20 +87,31 @@ namespace AnonChat.UI.Controllers
 
         [Authorize]
         [HttpPost("UserSearch")]
-        [ValidateAntiForgeryToken]
-        public ActionResult UserSearch(SearchViewModel searchViewModel)
+        public ActionResult UserSearch([FromBody]SearchViewModel searchViewModel)
         {
+            timer1.Interval = (15000);
+            timer1.Enabled = true;
+            timer1.Start();
+            var user = accountService.FindUserById(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
+            accountService.EditUserStatus(user, true);
+            TimerCallback tm = new TimerCallback(Search);
+            Timer timer2 = new Timer(tm, searchViewModel, 0, 2000);
+        }
+
+        public void Search(object obj)
+        {
+            SearchViewModel x = (SearchViewModel)obj;
             IEnumerable<ApplicationUser> users = accountService.GetUsers();
-            if (searchViewModel.AgeMin != null)
-                users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) >= searchViewModel.AgeMin);
-            else return BadRequest("No such a user");
-            if (searchViewModel.AgeMax != null)
-                users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) <= searchViewModel.AgeMax);
-            else return BadRequest("No such a user");
-            if (!String.IsNullOrEmpty(searchViewModel.Gender))
-                users = users.Where(u => u.Gender == searchViewModel.Gender);
-            else return BadRequest("No such a user");
-            return Ok(users);
+            if (x.AgeMin != null)
+                users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) >= x.AgeMin);
+            if (x.AgeMax != null)
+                users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) <= x.AgeMax);
+            if (!String.IsNullOrEmpty(x.Gender))
+                users = users.Where(u => u.Gender == x.Gender);
+            if (users.Count() > 1)
+            {
+                var user = users.First(c => c.StartSearch == users.Max(n => n.StartSearch));
+            }
         }
 
         [Authorize]
