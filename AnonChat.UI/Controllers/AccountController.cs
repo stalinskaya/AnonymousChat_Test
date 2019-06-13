@@ -46,10 +46,10 @@ namespace AnonChat.UI.Controllers
         }
 
         [HttpPost, Route("Register")]
-        public async Task<object> Register(RegisterViewModel model)
+        public async Task<object> Register([FromBody]RegisterViewModel model)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest("Not a valid form");
 
             var user = new ApplicationUser
             {
@@ -58,7 +58,7 @@ namespace AnonChat.UI.Controllers
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Gender = model.Gender,
-                //BirthDay= model.Birthday,
+                BirthDay= model.Birthday,
                 StatusSearch = false
             };
 

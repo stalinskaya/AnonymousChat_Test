@@ -57,13 +57,13 @@ namespace AnonChat.BLL.Services
 
                     var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
                     var encode = HttpUtility.UrlEncode(code);
-                    var callbackUrl = new StringBuilder("http://")
+                    var callbackUrl = new StringBuilder("https://")
                         .AppendFormat(url)
                         .AppendFormat("/api/account/ConfirmEmail")
                         .AppendFormat($"?userId={user.Id}&code={encode}");
 
                     await emailService.SendEmailAsync(user.Email, "Confirm your account",
-                        $"Confirm the registration by clicking on the link: <a href='{callbackUrl}'>link</a>");
+                        $"Confirm the registration by clicking on the link: {callbackUrl}");
                     return result;
                 }
                 catch (Exception ex)

@@ -54,7 +54,6 @@ namespace AnonChat.DAL.EF
                 }
             }
 
-
             builder.Entity<ChatMessage>()
                 .HasOne<ApplicationUser>(m => m.Sender)
                 .WithMany(u => u.SendedMessages)

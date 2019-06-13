@@ -89,10 +89,13 @@ namespace AnonChat.UI.Controllers
             IEnumerable<ApplicationUser> users = accountService.GetUsers();
             if (searchViewModel.AgeMin != null)
                 users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) >= searchViewModel.AgeMin);
+            else return BadRequest("No such a user");
             if (searchViewModel.AgeMax != null)
                 users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) <= searchViewModel.AgeMax);
+            else return BadRequest("No such a user");
             if (!String.IsNullOrEmpty(searchViewModel.Gender))
                 users = users.Where(u => u.Gender == searchViewModel.Gender);
+            else return BadRequest("No such a user");
             return Ok(users);
         }
 

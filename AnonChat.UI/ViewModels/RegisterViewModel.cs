@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using AnonChat.Models.ListEntities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;

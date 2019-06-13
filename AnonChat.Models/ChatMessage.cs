@@ -11,7 +11,6 @@ namespace AnonChat.Models
         public string Content { get; set; }
         public bool IsReaded { get; set; }
         public DateTime SendingTime { get; set; }
-
         public string SenderId { get; set; }
         public string ReceiverId { get; set; }
         public virtual ApplicationUser Sender { get; set; }
