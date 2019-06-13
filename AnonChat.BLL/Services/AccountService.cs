@@ -20,8 +20,8 @@ namespace AnonChat.BLL.Services
     public class AccountService : IAccountService
     {
         IUnitOfWork Database { get; set; }
-        private UserManager<ApplicationUser> UserManager;
-        private SignInManager<ApplicationUser> SignInManager;
+        private readonly UserManager<ApplicationUser> UserManager;
+        private readonly SignInManager<ApplicationUser> SignInManager;
         private readonly ApplicationSettings applicationSettings;
         private readonly IEmailService emailService;
 
@@ -85,7 +85,7 @@ namespace AnonChat.BLL.Services
         public void EditUserStatus(ApplicationUser user, bool status)
         {
             user.StatusSearch = status;
-            user.StartSearch = DateTime.Now;
+            if (status == false) user.StartSearch = new DateTime(2017, 1, 18);
             Database.Users.Update(user);
             Database.Save();
         }
@@ -118,9 +118,6 @@ namespace AnonChat.BLL.Services
                 && await UserManager.CheckPasswordAsync(user, password)
                 && await UserManager.IsEmailConfirmedAsync(user))
             {
-     
-                var options = new IdentityOptions();
-
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]

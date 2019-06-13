@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using AnonChat.BLL.Interfaces;
 using AnonChat.Models;
 using AnonChat.UI.ViewModels;
@@ -19,7 +20,7 @@ namespace AnonChat.UI.Controllers
     [ApiController]
     public class ChatController : ControllerBase
     {
-
+        
         public readonly IAccountService accountService;
         public readonly IChatService chatService;
         public ChatController (IAccountService accountService)
@@ -87,32 +88,36 @@ namespace AnonChat.UI.Controllers
 
         [Authorize]
         [HttpPost("UserSearch")]
-        public ActionResult UserSearch([FromBody]SearchViewModel searchViewModel)
+        public async Task<ActionResult> UserSearch([FromBody]SearchViewModel searchViewModel)
         {
-            timer1.Interval = (15000);
-            timer1.Enabled = true;
-            timer1.Start();
-            var user = accountService.FindUserById(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
+            var user = await accountService.FindUserById(User.Claims.First(c => c.Type == "UserID").Value);
             accountService.EditUserStatus(user, true);
-            TimerCallback tm = new TimerCallback(Search);
-            Timer timer2 = new Timer(tm, searchViewModel, 0, 2000);
+            IEnumerable<ApplicationUser> users = accountService.GetUsers();
+            ApplicationUser user_search = new ApplicationUser();
+            Stopwatch stopWatch = new Stopwatch();
+            var counter = 0;
+            do
+            {
+                stopWatch.Start();
+                if (searchViewModel.AgeMin != null)
+                    users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) >= searchViewModel.AgeMin);
+                if (searchViewModel.AgeMax != null)
+                    users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) <= searchViewModel.AgeMax);
+                if (!String.IsNullOrEmpty(searchViewModel.Gender))
+                    users = users.Where(u => u.Gender == searchViewModel.Gender);
+                if (users.Count() > 1)
+                {
+                    users = users.Where(c => c.StartSearch == users.Max(n => n.StartSearch));
+                }
+                stopWatch.Stop();
+                counter += stopWatch.Elapsed.Milliseconds;
+            }
+            while (counter <= 30000 || user_search != null);
+            accountService.EditUserStatus(user, false);
+            if (user_search == null) return Ok("User не был найден");
+            else return Ok(user_search);
         }
 
-        public void Search(object obj)
-        {
-            SearchViewModel x = (SearchViewModel)obj;
-            IEnumerable<ApplicationUser> users = accountService.GetUsers();
-            if (x.AgeMin != null)
-                users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) >= x.AgeMin);
-            if (x.AgeMax != null)
-                users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) <= x.AgeMax);
-            if (!String.IsNullOrEmpty(x.Gender))
-                users = users.Where(u => u.Gender == x.Gender);
-            if (users.Count() > 1)
-            {
-                var user = users.First(c => c.StartSearch == users.Max(n => n.StartSearch));
-            }
-        }
 
         [Authorize]
         [HttpPost("SendMessage")]

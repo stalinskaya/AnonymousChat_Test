@@ -14,7 +14,7 @@ namespace AnonChat.BLL.Services
     public class ChatService : IChatService
     {
         IUnitOfWork Database { get; set; }
-        private UserManager<ApplicationUser> UserManager;
+        //private UserManager<ApplicationUser> UserManager;
 
         public void AddMessage (ChatMessage message)
         {

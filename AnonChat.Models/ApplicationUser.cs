@@ -17,7 +17,7 @@ namespace AnonChat.Models
         public virtual ICollection<ChatMessage> SendedMessages { get; set; }
         public virtual ICollection<ChatMessage> ReceivedMessages { get; set; }
         public bool StatusSearch { get; set; }
-        public DateTime StartSearch { get; set; }
+        public DateTime? StartSearch { get; set; }
         public ApplicationUser()
         {
             SendedMessages = new List<ChatMessage>();
