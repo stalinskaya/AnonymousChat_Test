@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AnonChat.DAL.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20190617124540_data")]
+    [Migration("20190617154438_data")]
     partial class data
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -95,7 +95,7 @@ namespace AnonChat.DAL.Migrations
 
                     b.HasKey("ChatID");
 
-                    b.ToTable("Chat");
+                    b.ToTable("Chats");
                 });
 
             modelBuilder.Entity("AnonChat.Models.ChatMessage", b =>

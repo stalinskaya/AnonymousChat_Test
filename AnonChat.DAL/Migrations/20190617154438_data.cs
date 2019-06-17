@@ -55,7 +55,7 @@ namespace AnonChat.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Chat",
+                name: "Chats",
                 columns: table => new
                 {
                     ChatID = table.Column<string>(nullable: false),
@@ -64,7 +64,7 @@ namespace AnonChat.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Chat", x => x.ChatID);
+                    table.PrimaryKey("PK_Chats", x => x.ChatID);
                 });
 
             migrationBuilder.CreateTable(
@@ -234,9 +234,9 @@ namespace AnonChat.DAL.Migrations
                 {
                     table.PrimaryKey("PK_ChatMessages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ChatMessages_Chat_ChatId",
+                        name: "FK_ChatMessages_Chats_ChatId",
                         column: x => x.ChatId,
-                        principalTable: "Chat",
+                        principalTable: "Chats",
                         principalColumn: "ChatID",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
@@ -342,7 +342,7 @@ namespace AnonChat.DAL.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Chat");
+                name: "Chats");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

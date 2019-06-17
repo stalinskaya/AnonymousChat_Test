@@ -14,8 +14,4 @@
     <ProjectReference Include="..\AnonChat.Models\AnonChat.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

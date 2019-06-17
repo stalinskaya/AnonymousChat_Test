@@ -93,7 +93,7 @@ namespace AnonChat.DAL.Migrations
 
                     b.HasKey("ChatID");
 
-                    b.ToTable("Chat");
+                    b.ToTable("Chats");
                 });
 
             modelBuilder.Entity("AnonChat.Models.ChatMessage", b =>
