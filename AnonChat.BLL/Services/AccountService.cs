@@ -89,6 +89,7 @@ namespace AnonChat.BLL.Services
             Database.Users.Update(user);
             Database.Save();
         }
+
         public async Task<ApplicationUser> FindUserByName(string userName)
         {
             var user = await UserManager.FindByNameAsync(userName);
@@ -134,6 +135,15 @@ namespace AnonChat.BLL.Services
             }
             else
                 return null;
+        }
+        public void EditUser(ApplicationUser user, ApplicationUser new_user)
+        {
+            user.FirstName = new_user.FirstName;
+            user.LastName = new_user.LastName;
+            user.BirthDay = new_user.BirthDay;
+            user.Gender = new_user.Gender;
+            Database.Users.Update(user);
+            Database.Save();
         }
 
         public async Task<OperationDetails> EmailConfirmed(ApplicationUser user)

@@ -72,6 +72,7 @@ namespace AnonChat.UI
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IFileService, FileService>();
 
 
             services.AddCors();

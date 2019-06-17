@@ -75,13 +75,21 @@ namespace AnonChat.UI.Controllers
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             var user = await accountService.FindUserById(userId);
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code))
+            {
+                ModelState.AddModelError("", "User Id and Code are required");
+                return BadRequest(ModelState);
+            }
             if (user == null)
             {
-                return BadRequest("Error");
+                return BadRequest("No such a user");
             }
+
             var result = await accountService.ConfirmEmail(user, code);
             if (result.Succeeded)
-                return Ok();
+            {
+                return Redirect("http://localhost:4200/user/login");
+            }
             return BadRequest(result.Message);
         }
 

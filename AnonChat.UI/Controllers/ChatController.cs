@@ -27,64 +27,64 @@ namespace AnonChat.UI.Controllers
         {
             this.accountService = accountService;
         }
-        private class MessageEqualityComparer : IEqualityComparer<ChatMessage>
-        {
-            public bool Equals(ChatMessage m1, ChatMessage m2)
-            {
-                return (m1.Receiver.Id == m2.Receiver.Id && m1.Sender.Id == m2.Sender.Id) ||
-                    (m1.Receiver.Id == m2.Sender.Id && m1.Sender.Id == m2.Receiver.Id);
-            }
-
-            public int GetHashCode(ChatMessage message)
-            {
-                if (message.Sender.Id.CompareTo(message.Receiver.Id) >= 0)
-                    return message.Sender.Id.GetHashCode();
-                else
-                    return message.Receiver.Id.GetHashCode();
-            }
-        }
-
-        //[Authorize]
-        //public async Task<ActionResult> AddFriend(string id)
+        //private class MessageEqualityComparer : IEqualityComparer<ChatMessage>
         //{
-        //    ApplicationUser firstUser = await UserManager.FindByIdAsync(AuthenticationManager.User.Identity.GetUserId());
-        //    ApplicationUser secondUser = await UserManager.FindByIdAsync(id);
-        //    firstUser.SecondFriends.Add(secondUser);
-        //    await UserManager.UpdateAsync(firstUser);
-        //    return RedirectToAction("Index", "Home", new { id = id });
+        //    public bool Equals(ChatMessage m1, ChatMessage m2)
+        //    {
+        //        return (m1.Receiver.Id == m2.Receiver.Id && m1.Sender.Id == m2.Sender.Id) ||
+        //            (m1.Receiver.Id == m2.Sender.Id && m1.Sender.Id == m2.Receiver.Id);
+        //    }
+
+        //    public int GetHashCode(ChatMessage message)
+        //    {
+        //        if (message.Sender.Id.CompareTo(message.Receiver.Id) >= 0)
+        //            return message.Sender.Id.GetHashCode();
+        //        else
+        //            return message.Receiver.Id.GetHashCode();
+        //    }
         //}
 
-        [Authorize]
-        [HttpGet]
-        [Route("Dialogs")]
-        public async Task<ActionResult> Dialogs()
-        {
-            ApplicationUser user = await accountService.FindUserById(User.Claims.First(c => c.Type == "UserID").Value);
-            var messages = user.ReceivedMessages.Union(user.SendedMessages).ToList();
-            messages.Sort((m1, m2) => m2.SendingTime.CompareTo(m1.SendingTime));
-            IEnumerable<ChatMessage> dialogs = messages.Distinct(new MessageEqualityComparer());
-            if (dialogs != null || dialogs.Count() != 0) return Ok(dialogs);
-            else return BadRequest();
-        }
+        ////[Authorize]
+        ////public async Task<ActionResult> AddFriend(string id)
+        ////{
+        ////    ApplicationUser firstUser = await UserManager.FindByIdAsync(AuthenticationManager.User.Identity.GetUserId());
+        ////    ApplicationUser secondUser = await UserManager.FindByIdAsync(id);
+        ////    firstUser.SecondFriends.Add(secondUser);
+        ////    await UserManager.UpdateAsync(firstUser);
+        ////    return RedirectToAction("Index", "Home", new { id = id });
+        ////}
 
-        [Authorize]
-        [HttpGet]
-        [Route("Dialog/{id_1}/{id_2}")]
-        public async Task<ActionResult> Dialog(string id_1, string id_2)
-        {
-            ApplicationUser firstUser = await accountService.FindUserById(User.Claims.First(c => c.Type == "UserID").Value);
-            var secondUserId = firstUser.Id == id_1 ? id_2 : id_1;
-            var dialog = firstUser.ReceivedMessages
-                .Union(firstUser.SendedMessages)
-                .Where(u => (u.SenderId == secondUserId) || (u.ReceiverId == secondUserId))
-                .ToList();
-            dialog.Sort((m1, m2) => m2.SendingTime.CompareTo(m1.SendingTime));
-            //ViewBag.NewMessageSenderId = firstUser.Id;
-            ////ViewBag.SenderPhoto = firstUser.Photo;
-            ////ViewBag.SenderName = firstUser.UserName;
-            //ViewBag.NewMessageReceiverId = secondUserId;
-            return Ok(dialog);
-        }
+        //[Authorize]
+        //[HttpGet]
+        //[Route("Dialogs")]
+        //public async Task<ActionResult> Dialogs()
+        //{
+        //    ApplicationUser user = await accountService.FindUserById(User.Claims.First(c => c.Type == "UserID").Value);
+        //    var messages = user.ReceivedMessages.Union(user.SendedMessages).ToList();
+        //    messages.Sort((m1, m2) => m2.SendingTime.CompareTo(m1.SendingTime));
+        //    IEnumerable<ChatMessage> dialogs = messages.Distinct(new MessageEqualityComparer());
+        //    if (dialogs != null || dialogs.Count() != 0) return Ok(dialogs);
+        //    else return BadRequest();
+        //}
+
+        //[Authorize]
+        //[HttpGet]
+        //[Route("Dialog/{id_1}/{id_2}")]
+        //public async Task<ActionResult> Dialog(string id_1, string id_2)
+        //{
+        //    ApplicationUser firstUser = await accountService.FindUserById(User.Claims.First(c => c.Type == "UserID").Value);
+        //    var secondUserId = firstUser.Id == id_1 ? id_2 : id_1;
+        //    var dialog = firstUser.ReceivedMessages
+        //        .Union(firstUser.SendedMessages)
+        //        .Where(u => (u.SenderId == secondUserId) || (u.ReceiverId == secondUserId))
+        //        .ToList();
+        //    dialog.Sort((m1, m2) => m2.SendingTime.CompareTo(m1.SendingTime));
+        //    //ViewBag.NewMessageSenderId = firstUser.Id;
+        //    ////ViewBag.SenderPhoto = firstUser.Photo;
+        //    ////ViewBag.SenderName = firstUser.UserName;
+        //    //ViewBag.NewMessageReceiverId = secondUserId;
+        //    return Ok(dialog);
+        //}
 
         [Authorize]
         [HttpPost("UserSearch")]
@@ -93,7 +93,6 @@ namespace AnonChat.UI.Controllers
             var user = await accountService.FindUserById(User.Claims.First(c => c.Type == "UserID").Value);
             accountService.EditUserStatus(user, true);
             IEnumerable<ApplicationUser> users = accountService.GetUsers();
-            ApplicationUser user_search = new ApplicationUser();
             Stopwatch stopWatch = new Stopwatch();
             var counter = 0;
             do
@@ -112,10 +111,10 @@ namespace AnonChat.UI.Controllers
                 stopWatch.Stop();
                 counter += stopWatch.Elapsed.Milliseconds;
             }
-            while (counter <= 30000 || user_search != null);
+            while (counter <= 30000 && users.Any() == false);
             accountService.EditUserStatus(user, false);
-            if (user_search == null) return Ok("User не был найден");
-            else return Ok(user_search);
+            if (users.Any() == false) return BadRequest("User не был найден");
+            else return Ok(users);
         }
 
 

@@ -20,5 +20,6 @@ namespace AnonChat.BLL.Interfaces
         IEnumerable<ApplicationUser> GetUsers();
         Task<OperationDetails> Exit();
         void EditUserStatus(ApplicationUser user, bool status);
+        void EditUser(ApplicationUser user, ApplicationUser new_user);
     }
 }

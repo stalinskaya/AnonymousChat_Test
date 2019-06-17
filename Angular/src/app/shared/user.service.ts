@@ -23,6 +23,13 @@ export class UserService {
 
   });
 
+  editModel = this.fb.group({
+    FirstName: [''],
+    LastName: [''],
+    Birthday: [''],
+    Gender: ['']
+  })
+
   comparePasswords(fb: FormGroup) {
     let confirmPswrdCtrl = fb.get('ConfirmPassword');
     //passwordMismatch
@@ -54,5 +61,21 @@ export class UserService {
 
   getUserProfile() {
     return this.http.get(this.BaseURI + '/User');
+  }
+
+  updateUserProfile() {
+    var body = {
+      Firstname: this.editModel.value.FirstName,
+      Lastname: this.editModel.value.LastName,
+      Birthday: this.editModel.value.Birthday,
+      Gender: this.editModel.value.Gender
+    };
+    return this.http.put(this.BaseURI + '/user', body)
+  }
+
+  postFile(fileToUpload: File) {
+    const formData: FormData = new FormData();
+    formData.append('Image', fileToUpload);
+    return this.http.put(this.BaseURI + '/user/EditPhoto', formData);
   }
 }

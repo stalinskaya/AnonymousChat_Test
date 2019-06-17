@@ -1,15 +1,50 @@
 <nav class="navbar navbar-dark bg-dark">
   <a class="navbar-brand text-white">Anonymous Chat</a>
   <button class="btn btn-danger my-2 my-sm-0" (click)="onProfile()">My Profile</button>
-  <button class="btn btn-danger my-2 my-sm-0" (click)="onLogout()">Logout</button>
+  <button class="btn btn-danger my-1 my-sm-0" (click)="onLogout()">Logout</button>
 </nav>
+<div class="row">
+    <div class="col-sm-3">
+      <label class="hoverable" for="fileInput">
+        <img [src]="url ? url : 'https://www.w3schools.com/howto/img_avatar.png'"> 
+        <div class="hover-text">Choose file</div>
+        <div class="background"></div>
+      </label>
+      <input id="fileInput" type='file' (change)="onSelectFile($event)">
+    </div>
+  <div class="col-sm-3" *ngIf="!visibleDetailsUser">
+    <div class="card m-5" style="width:18rem" *ngIf="userDetails">
+      <form [formGroup]="service.editModel" autocomplete="off" (submit)="onSubmit()">
 
-<div class="card m-5" style="width:18rem" *ngIf="userDetails">
-  <ul class="list-group">
-    <li class="list-group-item"><strong>FirstName : </strong>{{userDetails.firstName}}</li>
-    <li class="list-group-item"><strong>LastName : </strong>{{userDetails.lastName}}</li>
-    <li class="list-group-item"><strong>Gender : </strong>{{userDetails.gender}}</li>
-    <li class="list-group-item"><strong>Birthday : </strong>{{userDetails.birthday}}</li>
-    <li class="list-group-item"><strong>Email : </strong>{{userDetails.email}}</li>
-  </ul>
+        <div class="form-group required">
+          <label>FirstName</label>
+          <input class="form-control" style="display: initial" formControlName="FirstName" value="{{userDetails.FirstName}}">
+        </div>
+
+        <div class="form-group required">
+          <label>LastName</label>
+          <input class="form-control" formControlName="LastName" value="{{userDetails.LastName}}">
+        </div>
+
+        <div class="form-group required">
+          <label>Birthday</label>
+          <input class="form-control" formControlName="Birthday" type="date" value="{{userDetails.Birthday}}">
+        </div>
+
+        <div class="form-group required">  
+            <label> Select Gender </label>  
+            <select formControlName="Gender" (change)="selected()">
+              <option *ngFor="let item of data" [value]="item">{{item}}</option>
+            </select>
+        </div>
+        <div class="form-row">
+          <button type="submit" class="btn btn-lg btn-block">Save</button>
+        </div>
+        <div style="text-align: center">
+          <button type="button" class="btn btn-outline-danger" (click)="onEditUser()"
+            style="margin-top: 2%;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

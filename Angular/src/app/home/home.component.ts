@@ -15,15 +15,14 @@ export class HomeComponent implements OnInit {
   }
 
   selectedLevel;
-  data = ["female", "male", "no matter" ];
+  data = ["female", "male"];
 
   selected(){
     console.log(this.selectedLevel)
   }
 
-  ngOnInit() {  
+  ngOnInit() {
   }
-
 
   onLogout() {
     localStorage.removeItem('token');
@@ -35,14 +34,20 @@ export class HomeComponent implements OnInit {
   }
 
   onSubmit() {
-    this.service.search().subscribe(
-      (res: any) => {
-          this.service.formModel.reset();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+
+    const {AgeMin, AgeMax} = this.service.formModel.controls;
+    const isFormValid =AgeMin.value< AgeMax.value;
+    debugger
+    if(isFormValid) {
+      this.service.search().subscribe(
+        (res: any) => {
+            this.service.formModel.reset();
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
   }
 }
 
