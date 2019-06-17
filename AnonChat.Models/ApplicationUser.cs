@@ -14,7 +14,6 @@ namespace AnonChat.Models
         public string LastName { get; set; }
         public DateTime BirthDay { get; set; }
         public string Gender { get; set; }
-        public virtual ICollection<Chat> Chats { get; set; }
         public virtual ICollection<ChatMessage> SendedMessages { get; set; }
         public virtual ICollection<ChatMessage> ReceivedMessages { get; set; }
         public bool StatusSearch { get; set; }
@@ -27,7 +26,6 @@ namespace AnonChat.Models
         {
             SendedMessages = new List<ChatMessage>();
             ReceivedMessages = new List<ChatMessage>();
-            Chats = new List<Chat>();
         }
     }
 }

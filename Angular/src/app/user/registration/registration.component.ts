@@ -2,19 +2,26 @@ import { UserService } from './../../shared/user.service';
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
+
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.component.html',
   styles: ["node_modules/bootstrap/dist/css/bootstrap.min.css"]
 })
 export class RegistrationComponent implements OnInit {
-
   constructor(public service: UserService, private toastr: ToastrService) { }
+
+  selectedLevel;
+  data = ["female", "male", "no matter" ];
 
   ngOnInit() {
     this.service.formModel.reset();
   }
 
+  selected(){
+    console.log(this.selectedLevel)
+  }
+  
   onSubmit() {
     this.service.register().subscribe(
       (res: any) => {
@@ -40,8 +47,4 @@ export class RegistrationComponent implements OnInit {
       }
     );
   }
-
-}
-export class NgbdDatepickerPopup {
-  model;
 }

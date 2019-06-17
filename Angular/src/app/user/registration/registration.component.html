@@ -12,10 +12,10 @@
       field is mandatory.</label>
   </div>
   <div class="form-group required">
-    <label>Gender</label>
-    <input class="form-control" formControlName="Gender">
-    <label class="text-danger" *ngIf="service.formModel.get('Gender').touched && service.formModel.get('Gender').errors?.required">This
-      field is mandatory.</label>
+    <label>Gender </label>
+      <select formControlName="Gender" (change)="selected()">
+        <option *ngFor="let item of data" [value]="item">{{item}}</option>
+      </select>
   </div>
   <div class="form-group required">
     <label>Birthday</label>

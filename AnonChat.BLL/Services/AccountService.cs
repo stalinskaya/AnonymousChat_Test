@@ -63,7 +63,7 @@ namespace AnonChat.BLL.Services
                         .AppendFormat($"?userId={user.Id}&code={encode}");
 
                     await emailService.SendEmailAsync(user.Email, "Confirm your account",
-                        $"Confirm the registration by clicking on the link: {callbackUrl}");
+                        $"Confirm the registration by clicking on the link: <a href='{callbackUrl}'>link</a>");
                     return result;
                 }
                 catch (Exception ex)

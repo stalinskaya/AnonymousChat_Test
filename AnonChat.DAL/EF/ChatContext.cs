@@ -13,6 +13,7 @@ namespace AnonChat.DAL.EF
     {
         public DbSet<LogDetail> LogDetails { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<Chat> Chats { get; set; }
         public DbSet<FileModel> FileModels { get; set; }
 
         public ChatContext(DbContextOptions<ChatContext> options)
@@ -54,14 +55,6 @@ namespace AnonChat.DAL.EF
                     }
                 }
             }
-            builder.Entity<Chat>()
-                .HasOne<ApplicationUser>(m => m.First)
-                .WithMany(u => u.Chats)
-                .OnDelete(DeleteBehavior.SetNull);
-            builder.Entity<Chat>()
-                .HasOne<ApplicationUser>(m => m.Second)
-                .WithMany(u => u.Chats)
-                .OnDelete(DeleteBehavior.SetNull);
 
             builder.Entity<ChatMessage>()
                 .HasOne<ApplicationUser>(m => m.Sender)

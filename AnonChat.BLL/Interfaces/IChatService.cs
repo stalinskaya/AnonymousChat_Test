@@ -8,6 +8,10 @@ namespace AnonChat.BLL.Interfaces
 {
     public interface IChatService
     {
-        void AddMessage(ChatMessage chatMessage);
+        void AddChat(Chat chat);
+        bool DoesChatExist(string senderId);
+        void AddMessage(ChatMessage message);
+        IEnumerable<ChatMessage> GetChatMessages(string senderId, string recieverId);
+
     }
 }
