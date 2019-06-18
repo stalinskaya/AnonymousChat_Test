@@ -175,6 +175,19 @@ namespace AnonChat.DAL.Migrations
                     b.ToTable("LogDetails");
                 });
 
+            modelBuilder.Entity("AnonChat.Models.UserChat", b =>
+                {
+                    b.Property<string>("UserId");
+
+                    b.Property<string>("ChatId");
+
+                    b.HasKey("UserId", "ChatId");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("UserChat");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -313,6 +326,19 @@ namespace AnonChat.DAL.Migrations
                     b.HasOne("AnonChat.Models.ApplicationUser", "ApplicationUser")
                         .WithOne("Photo")
                         .HasForeignKey("AnonChat.Models.FileModel", "ApplicationUserID");
+                });
+
+            modelBuilder.Entity("AnonChat.Models.UserChat", b =>
+                {
+                    b.HasOne("AnonChat.Models.Chat", "Chat")
+                        .WithMany("UserChats")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("AnonChat.Models.ApplicationUser", "User")
+                        .WithMany("UserChats")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

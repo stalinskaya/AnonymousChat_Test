@@ -9,6 +9,7 @@ namespace AnonChat.Models
     {
         public string ChatID { get; set; }
         public virtual ICollection<ChatMessage> Messages { get; set; }
+        public virtual ICollection<UserChat> UserChats { get; set; }
         public bool StatusBlock { get; set; }
         public bool StatusAnonymity { get; set; }
 

@@ -253,6 +253,30 @@ namespace AnonChat.DAL.Migrations
                         onDelete: ReferentialAction.SetNull);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserChat",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    ChatId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserChat", x => new { x.UserId, x.ChatId });
+                    table.ForeignKey(
+                        name: "FK_UserChat_Chats_ChatId",
+                        column: x => x.ChatId,
+                        principalTable: "Chats",
+                        principalColumn: "ChatID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserChat_AspNetUsers_ChatId",
+                        column: x => x.ChatId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -310,6 +334,11 @@ namespace AnonChat.DAL.Migrations
                 table: "FileModels",
                 column: "ApplicationUserID",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserChat_ChatId",
+                table: "UserChat",
+                column: "ChatId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -337,6 +366,9 @@ namespace AnonChat.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "LogDetails");
+
+            migrationBuilder.DropTable(
+                name: "UserChat");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

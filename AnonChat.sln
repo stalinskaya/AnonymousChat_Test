@@ -6,10 +6,14 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnonChat.DAL", "AnonChat.DAL\AnonChat.DAL.csproj", "{E1193DD4-3BD1-42F9-869E-A087AB2B18C7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnonChat.BLL", "AnonChat.BLL\AnonChat.BLL.csproj", "{98C43BEB-B8A9-4F4F-8438-6B37F55FDB68}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E1193DD4-3BD1-42F9-869E-A087AB2B18C7} = {E1193DD4-3BD1-42F9-869E-A087AB2B18C7}
+		{18E906FD-E8D8-4236-838A-E9F61E164AB4} = {18E906FD-E8D8-4236-838A-E9F61E164AB4}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnonChat.Models", "AnonChat.Models\AnonChat.Models.csproj", "{18E906FD-E8D8-4236-838A-E9F61E164AB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnonChat.UI", "AnonChat.UI\AnonChat.UI.csproj", "{E5B6CCCD-9088-4C33-906D-0C284F6FAACC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnonChat.UI", "AnonChat.UI\AnonChat.UI.csproj", "{E5B6CCCD-9088-4C33-906D-0C284F6FAACC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

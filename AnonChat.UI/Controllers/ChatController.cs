@@ -93,11 +93,8 @@ namespace AnonChat.UI.Controllers
             var user = await accountService.FindUserById(User.Claims.First(c => c.Type == "UserID").Value);
             accountService.EditUserStatus(user, true);
             IEnumerable<ApplicationUser> users = accountService.GetUsers();
-            Stopwatch stopWatch = new Stopwatch();
-            var counter = 0;
             do
             {
-                stopWatch.Start();
                 if (searchViewModel.AgeMin != null)
                     users = users.Where(u => EF.Functions.DateDiffYear(u.BirthDay, DateTime.Today) >= searchViewModel.AgeMin);
                 if (searchViewModel.AgeMax != null)
@@ -108,10 +105,8 @@ namespace AnonChat.UI.Controllers
                 {
                     users = users.Where(c => c.StartSearch == users.Max(n => n.StartSearch));
                 }
-                stopWatch.Stop();
-                counter += stopWatch.Elapsed.Milliseconds;
             }
-            while (counter <= 30000 && users.Any() == false);
+            while (users.Any() == false);
             accountService.EditUserStatus(user, false);
             if (users.Any() == false) return BadRequest("User не был найден");
             else return Ok(users);

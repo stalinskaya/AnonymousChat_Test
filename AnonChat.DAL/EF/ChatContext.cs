@@ -71,7 +71,19 @@ namespace AnonChat.DAL.EF
                 .WithMany(u => u.Messages)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            
+            builder.Entity<UserChat>()
+                .HasKey(bc => new { bc.UserId, bc.ChatId });
+
+            builder.Entity<UserChat>()
+                .HasOne(bc => bc.User)
+                .WithMany(b => b.UserChats)
+                .HasForeignKey(bc => bc.ChatId);
+
+            builder.Entity<UserChat>()
+                .HasOne(bc => bc.Chat)
+                .WithMany(c => c.UserChats)
+                .HasForeignKey(bc => bc.ChatId);
+
         }
     }
 }
