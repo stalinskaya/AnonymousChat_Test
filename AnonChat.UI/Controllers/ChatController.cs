@@ -110,6 +110,7 @@ namespace AnonChat.UI.Controllers
             accountService.EditUserStatus(user, false);
             if (users.Any() == false) return BadRequest("User не был найден");
             else return Ok(users);
+
         }
 
 
