@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
   }
 
   selectedLevel;
-  data = ["female", "male"];
+  data = ["female", "male", "no matter"];
 
   selected(){
     console.log(this.selectedLevel)

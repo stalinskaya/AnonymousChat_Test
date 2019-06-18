@@ -1,10 +1,18 @@
 <nav class="navbar navbar-dark bg-dark">
-  <a class="navbar-brand text-white">Anonymous Chat</a>
-  <button class="btn btn-danger my-2 my-sm-0" (click)="onProfile()">My Profile</button>
-  <button class="btn btn-danger my-1 my-sm-0" (click)="onLogout()">Logout</button>
+  <a class="navbar-brand text-white" (click)="onProfile()">Anonymous Chat</a>
+  <div class="col-sm-5 text-right">
+    <button class="btn btn-danger" (click)="onProfile()">My Profile</button>
+    <button class="btn btn-danger ml-1" (click)="onLogout()">Logout</button>
+  </div>
 </nav>
+<div class="container" style="padding: 20px">
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm" *ngIf="visibleDetailsUser">
+      <label class="hoverable">
+        <img [src]="url ? url : 'https://www.w3schools.com/howto/img_avatar.png'">
+      </label>
+    </div>
+    <div class="col-sm" *ngIf="!visibleDetailsUser">
       <label class="hoverable" for="fileInput">
         <img [src]="url ? url : 'https://www.w3schools.com/howto/img_avatar.png'"> 
         <div class="hover-text">Choose file</div>
@@ -12,10 +20,21 @@
       </label>
       <input id="fileInput" type='file' (change)="onSelectFile($event)">
     </div>
-  <div class="col-sm-3" *ngIf="!visibleDetailsUser">
-    <div class="card m-5" style="width:18rem" *ngIf="userDetails">
+  <div class="col-sm" *ngIf="visibleDetailsUser">
+    <div style="width: 80%" *ngIf="userDetails">
+      <ul class="list-group">
+        <li class="list-group-item"><strong>FirstName : </strong>{{userDetails.firstName}}</li>
+        <li class="list-group-item"><strong>LastName : </strong>{{userDetails.lastName}}</li>
+        <li class="list-group-item"><strong>Gender : </strong>{{userDetails.gender}}</li>
+        <li class="list-group-item"><strong>Birthday : </strong>{{userDetails.birthday}}</li>
+        <li class="list-group-item"><strong>Email : </strong>{{userDetails.email}}</li>
+      </ul>
+      <button type="button" class="btn btn-outline-danger btn-block" (click)="onEditUser()" style="margin-top: 2%;">Change Info</button>
+    </div>
+  </div>
+  <div class="col-sm" *ngIf="!visibleDetailsUser">
+    <div style="width: 80%" *ngIf="userDetails">
       <form [formGroup]="service.editModel" autocomplete="off" (submit)="onSubmit()">
-
         <div class="form-group required">
           <label>FirstName</label>
           <input class="form-control" style="display: initial" formControlName="FirstName" value="{{userDetails.FirstName}}">
@@ -47,4 +66,5 @@
       </form>
     </div>
   </div>
+</div>
 </div>

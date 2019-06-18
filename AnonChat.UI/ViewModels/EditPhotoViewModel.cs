@@ -9,6 +9,7 @@ namespace AnonChat.UI.ViewModels
 {
     public class EditPhotoViewModel
     {
+
         public ApplicationUser ApplicationUser { get; set; }
         public IFormFile Photo { get; set; }
         public EditPhotoViewModel(ApplicationUser user, IFormFile photo)
