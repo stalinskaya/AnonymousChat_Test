@@ -15,6 +15,9 @@ import { LoginComponent } from './user/login/login.component';
 import { HomeComponent } from './home/home.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { ProfileComponent } from './profile/profile.component';
+import { SearchComponent } from './home/search/search.component';
+import { ChatsComponent } from './home/chats/chats.component';
+import { DialogComponent } from './home/chats/dialog/dialog.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +26,10 @@ import { ProfileComponent } from './profile/profile.component';
     RegistrationComponent,
     LoginComponent,
     HomeComponent,
-    ProfileComponent
+    ProfileComponent,
+    SearchComponent,
+    ChatsComponent,
+    DialogComponent
   ],
   imports: [
     BrowserModule,

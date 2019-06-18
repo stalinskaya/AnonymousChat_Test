@@ -13,6 +13,7 @@ namespace AnonChat.DAL.Interfaces
         IRepository<LogDetail> LogDetails { get; }
         IRepository<FileModel> FileModels { get; }
         IRepository<Chat> Chats { get; }
+        IRepository<UserChat> UserChats { get; }
 
         Task SaveAsync();
         void Save();

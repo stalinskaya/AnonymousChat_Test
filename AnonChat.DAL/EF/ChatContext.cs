@@ -14,6 +14,7 @@ namespace AnonChat.DAL.EF
         public DbSet<LogDetail> LogDetails { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<Chat> Chats { get; set; }
+        public DbSet<UserChat> UserChats { get; set; }
         public DbSet<FileModel> FileModels { get; set; }
 
         public ChatContext(DbContextOptions<ChatContext> options)

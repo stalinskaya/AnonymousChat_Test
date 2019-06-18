@@ -106,6 +106,14 @@ namespace AnonChat.BLL.Services
             return null;
         }
 
+        public async Task<String> FindIdByEmail(string email)
+        {
+            var user = await UserManager.FindByEmailAsync(email);
+            if (user != null)
+                return user.Id;
+            return null;
+        }
+
         public async Task<OperationDetails> ConfirmEmail(ApplicationUser user, string code)
         {
             var success = await UserManager.ConfirmEmailAsync(user, code);

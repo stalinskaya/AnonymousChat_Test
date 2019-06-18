@@ -17,6 +17,7 @@ namespace AnonChat.DAL.Repositories
         private ChatMessageRepository chatMessageRepository;
         private FileRepository fileRepository;
         private ChatRepository chatRepository;
+        private UserChatRepository userChatRepository;
 
         public EFUnitOfWork(ChatContext db)
         {
@@ -60,6 +61,16 @@ namespace AnonChat.DAL.Repositories
                 if (chatRepository == null)
                     chatRepository = new ChatRepository(db);
                 return chatRepository;
+            }
+        }
+
+        public IRepository<UserChat> UserChats
+        {
+            get
+            {
+                if (userChatRepository == null)
+                    userChatRepository = new UserChatRepository(db);
+                return userChatRepository;
             }
         }
 

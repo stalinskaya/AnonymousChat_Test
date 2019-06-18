@@ -23,9 +23,11 @@
     "@angular/platform-browser-dynamic": "~8.0.0",
     "@angular/router": "~8.0.0",
     "@ng-bootstrap/ng-bootstrap": "^4.2.1",
+    "angular-countdown": "^1.2.1",
     "core-js": "^2.5.4",
     "hammerjs": "^2.0.8",
     "i": "^0.3.6",
+    "ngx-countdown": "^3.2.0",
     "ngx-toastr": "^9.1.1",
     "rxjs": "~6.5.2",
     "zone.js": "~0.9.1"

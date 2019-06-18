@@ -7,7 +7,6 @@ namespace AnonChat.Models
     {
         public int Id { get; set; }
         public string Content { get; set; }
-        public bool IsReaded { get; set; }
         public DateTime SendingTime { get; set; }
 
         [ForeignKey("ApplicationUser")]
