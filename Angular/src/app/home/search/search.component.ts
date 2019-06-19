@@ -27,9 +27,14 @@ export class SearchComponent implements OnInit {
     this.router.navigate(['/user/login']);
   }
 
+  onProfile() {
+    this.router.navigate(['/profile']);
+  }
+
   onSubmit() {
     const {AgeMin, AgeMax} = this.service.formModel.controls;
     const isFormValid = AgeMin.value< AgeMax.value;
+    debugger
     if(isFormValid) {
       this.service.search().subscribe(
         (res: any) => {

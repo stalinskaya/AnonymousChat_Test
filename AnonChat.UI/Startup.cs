@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AnonChat.BLL.Hubs;
 using AnonChat.BLL.Interfaces;
 using AnonChat.BLL.Services;
 using AnonChat.BLL.Settings;
@@ -98,8 +99,25 @@ namespace AnonChat.UI
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
                 };
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // если запрос направлен хабу
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            (path.StartsWithSegments("/chat")))
+                        {
+                            // получаем токен из строки запроса
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
-            //services.AddSignalR();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -125,11 +143,12 @@ namespace AnonChat.UI
 
             app.UseAuthentication();
             app.UseCookiePolicy();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chats/dialog");
+            });
             app.UseMvc();
-            //app.UseSignalR(routes =>
-            //{
-            //    routes.MapHub<ChatHub>("chat");
-            //});
+
         }
     }
 }

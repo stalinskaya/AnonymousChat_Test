@@ -27,7 +27,6 @@ namespace AnonChat.UI.Controllers
         {
             this.accountService = accountService;
         }
-        
 
         [Authorize]
         [HttpPost("UserSearch")]
@@ -44,7 +43,7 @@ namespace AnonChat.UI.Controllers
                 users = users.Where(u => u.Gender == searchViewModel.Gender);
             accountService.EditUserStatus(user, false);
             if (users.Any() == false) return BadRequest("User не был найден");
-            else return Ok(users);
+            else return Ok(users.First().Id);
         }
     }
 }

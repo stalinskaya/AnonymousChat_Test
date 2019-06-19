@@ -1,6 +1,7 @@
 ﻿using AnonChat.BLL.Interfaces;
 using AnonChat.DAL.EF;
 using AnonChat.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace AnonChat.BLL.Hubs
         public string userId { get; set; }
         public string connId { get; set; }
     }
+    [Authorize]
     public class ChatHub : Hub
     {
         public readonly IAccountService accountService;
