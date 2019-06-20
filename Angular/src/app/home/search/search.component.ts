@@ -34,7 +34,6 @@ export class SearchComponent implements OnInit {
   onSubmit() {
     const {AgeMin, AgeMax} = this.service.formModel.controls;
     const isFormValid = AgeMin.value< AgeMax.value;
-    debugger
     if(isFormValid) {
       this.service.search().subscribe(
         (res: any) => {

@@ -22,6 +22,14 @@ namespace AnonChat.BLL.Services
             this.UserManager = UserManager;
         }
 
+        public bool ExistChat(string userid_1, string userid_2)
+        {
+            var chat1 = Database.UserChats.Find(i => i.UserId == userid_1);
+            var chat2 = Database.UserChats.Find(i => i.UserId == userid_2);
+            if (chat1.Intersect(chat2).Any()) return true;
+            else return false;
+        }
+
         public async Task AddChatAsync(string userid_1, string userid_2)
         {
             var user1 = await UserManager.FindByIdAsync(userid_1);

@@ -10,6 +10,7 @@ namespace AnonChat.BLL.Interfaces
     {
         Task AddChatAsync(string userid_1, string userid_2);
         Task AddMessageAsync(string userId, string receiverId, string content);
+        bool ExistChat(string userid_1, string userid_2);
 
     }
 }

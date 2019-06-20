@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -23,9 +23,5 @@ export class SearchService {
       AgeMax: this.formModel.value.AgeMax
     };
     return this.http.post(this.BaseURI + '/chat/UserSearch', body);
-  }
-
-  getUserProfile() {
-    return this.http.get(this.BaseURI + '/User');
   }
 }

@@ -1,8 +1,11 @@
 ﻿using AnonChat.BLL.Interfaces;
 using AnonChat.DAL.EF;
 using AnonChat.Models;
+using AnonChat.UI.Hubs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +18,15 @@ namespace AnonChat.BLL.Hubs
     {
         public string userId { get; set; }
         public string connId { get; set; }
+        
     }
+
     [Authorize]
-    public class ChatHub : Hub
+    public class ChatHub : Hub, IChatHub
     {
         public readonly IAccountService accountService;
         public readonly IChatService chatService;
+        
 
         public ChatHub (IAccountService accountService, IChatService chatService)
         {
@@ -47,6 +53,24 @@ namespace AnonChat.BLL.Hubs
                 await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
         }
 
+        public async Task SendFaraway(string message, string receiverId)
+        {
+            UserIds receiver, caller;
+            FindCallerReceiverByIds(receiverId, out caller, out receiver);
+            bool chatRoomExist = chatService.ExistChat(caller.userId, receiverId);
+            if (chatRoomExist)
+            {
+                await chatService.AddMessageAsync(caller.userId, receiverId, message);
+                await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
+            }
+            else
+            {
+                await chatService.AddChatAsync(receiverId, caller.userId);
+                await chatService.AddMessageAsync(caller.userId, receiverId, message);
+                await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
+            }
+        }
+
         public override Task OnDisconnectedAsync(Exception exception)
         {
             usersList.Remove(usersList.Find(u => u.connId == Context.ConnectionId));
@@ -64,11 +88,17 @@ namespace AnonChat.BLL.Hubs
                 usersList.Add(new UserIds { connId = Context.ConnectionId, userId = callerId });
             }
         }
+        public string GetConnectionId ()
+        {
+            return Context.ConnectionId;
+        }
 
         void FindCallerReceiverByIds(string receiverId, out UserIds caller, out UserIds receiver)
         {
             receiver = usersList.Find(i => i.userId == receiverId);
             caller = usersList.Find(i => i.connId == Context.ConnectionId);
         }
+
+        
     }
 }

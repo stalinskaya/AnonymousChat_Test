@@ -7,8 +7,8 @@ namespace AnonChat.UI.ViewModels
 {
     public class SearchViewModel
     {
-        public int? AgeMin { get; set; }
-        public int? AgeMax { get; set; }
+        public int AgeMin { get; set; }
+        public int AgeMax { get; set; }
         public string Gender { get; set; }
     }
 }

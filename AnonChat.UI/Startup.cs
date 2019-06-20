@@ -9,6 +9,7 @@ using AnonChat.BLL.Services;
 using AnonChat.BLL.Settings;
 using AnonChat.DAL.EF;
 using AnonChat.Models;
+using AnonChat.UI.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -74,6 +75,7 @@ namespace AnonChat.UI
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IChatHub, ChatHub>();
 
 
             services.AddCors();
