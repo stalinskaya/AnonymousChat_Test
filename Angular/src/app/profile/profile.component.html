@@ -5,20 +5,24 @@
     <button class="btn btn-danger ml-1" (click)="onLogout()">Logout</button>
   </div>
 </nav>
-<div class="container" style="padding: 20px">
 <div class="row">
     <div class="col-sm" *ngIf="visibleDetailsUser">
-      <label class="hoverable">
-        <img [src]="url ? url : 'https://www.w3schools.com/howto/img_avatar.png'">
+      <label class="hoverable" *ngIf="userDetails">
+        <img src="https://localhost:44333{{userDetails.Photo}} ? https://localhost:44333{{userDetails.Photo}} : 'https://www.w3schools.com/howto/img_avatar.png'">
       </label>
     </div>
     <div class="col-sm" *ngIf="!visibleDetailsUser">
-      <label class="hoverable" for="fileInput">
-        <img [src]="url ? url : 'https://www.w3schools.com/howto/img_avatar.png'"> 
-        <div class="hover-text">Choose file</div>
-        <div class="background"></div>
-      </label>
-      <input id="fileInput" type='file' (change)="onSelectFile($event)">
+      <div class="user-profile-picture">
+          <form #imageForm=ngForm (ngSubmit)="onChangeImage(Image)">
+            <div>
+              <img [src]="imageUrl" style="max-height: 320px; max-width: 431px">
+              <input type="file" #Image accept="image/*" (change)="handleFileInput($event.target.files)">
+            </div>
+            <button type="submit" class="btn btn-outline-success" [disabled]="Image.value==''"
+              style="margin-top: 2%;">Save
+            </button>
+          </form>
+        </div>
     </div>
   <div class="col-sm" *ngIf="visibleDetailsUser">
     <div style="width: 80%" *ngIf="userDetails">
@@ -66,5 +70,4 @@
       </form>
     </div>
   </div>
-</div>
 </div>

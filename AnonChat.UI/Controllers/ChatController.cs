@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
 using System.Security.Claims;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AnonChat.BLL.Interfaces;
@@ -45,12 +46,68 @@ namespace AnonChat.UI.Controllers
         static List<SearchIds> searchList = new List<SearchIds>();
 
         [HttpPost("UserSearch")]
-        public async Task<Object> UserSearch([FromBody] SearchViewModel searchViewModel)
+        public IActionResult UserSearch([FromBody] SearchViewModel searchViewModel)
         {
-            string text = await Task.FromResult<string>(GetSearchUserId(searchViewModel).Result);
+            var context = ControllerContext.HttpContext;
+            var isSocketRequest = context.WebSockets.IsWebSocketRequest;
 
+            //WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            Task.Run(() =>
+            {
+                var child = Task.Run(() =>
+                {
+                    while (true)
+                    {
+                        Task<ApplicationUser> userTask
+                        = accountService.FindUserById(User.Claims.First(c => c.Type == "UserID").Value);
+
+                        userTask.Wait();
+
+                        ApplicationUser user = userTask.Result;
+
+                        UpdateSearchList(user.Id, searchViewModel.Gender, searchViewModel.AgeMax, searchViewModel.AgeMin, DateTime.Now);
+                        var searchingRN = searchList.FindAll(u => EF.Functions.DateDiffYear(user.BirthDay, DateTime.Today) >= u.age_min &&
+                                                                  EF.Functions.DateDiffYear(user.BirthDay, DateTime.Today) <= u.age_max &&
+                                                                  u.gender == user.Gender);
+                        var full_match = new List<SearchIds>();
+                        if (searchingRN.Any())
+                        {
+                            full_match = searchingRN.FindAll(u => EF.Functions.DateDiffYear((accountService.FindUserById(u.userId).Result.BirthDay), DateTime.Today) >= u.age_min &&
+                                                                      EF.Functions.DateDiffYear((accountService.FindUserById(u.userId).Result.BirthDay), DateTime.Today) <= u.age_max &&
+                                                                      u.gender == (accountService.FindUserById(u.userId)).Result.Gender);
+                        }
+                        var resultId = "";
+                        if (full_match.Count >= 1)
+                        {
+                            resultId = full_match.Find(u => u.searchStart == (full_match.Min(i => i.searchStart))).userId;
+                        }
+                        else resultId = full_match.First().userId;
+                        var bytes = Encoding.ASCII.GetBytes(resultId);
+                        //var arraySegment = new ArraySegment<byte>(bytes);
+                        //await webSocket.SendAsync(arraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
+
+                        Thread.Sleep(2000); //sleeping so that we can see several messages are sent
+                    }
+                });
+
+                for (int i = 0; i < 30; i++)
+                {
+                    Thread.Sleep(1000);
+
+                    if(child.IsCompleted)
+                    {
+                        break;
+                    }
+                }
+
+
+            });
+            //await GetSearchUserId(context, webSocket, searchViewModel);
+            
+            return Ok();
+            
         }
-        private async Task<string> GetSearchUserId(SearchViewModel searchViewModel)
+        private async Task GetSearchUserId(HttpContext context, WebSocket webSocket, SearchViewModel searchViewModel)
         {
             while (true)
             {
@@ -66,18 +123,17 @@ namespace AnonChat.UI.Controllers
                                                               EF.Functions.DateDiffYear((accountService.FindUserById(u.userId).Result.BirthDay), DateTime.Today) <= u.age_max &&
                                                               u.gender == (accountService.FindUserById(u.userId)).Result.Gender);
                 }
-                using (WebSocket socket = new WebSocket())
+                var resultId = "";
+                if (full_match.Count >= 1)
                 {
-
-                    if (full_match.Count >= 1)
-                    {
-                        return full_match.Find(u => u.searchStart == (full_match.Min(i => i.searchStart))).userId;
-                    }
-                    else return full_match.First().userId;
+                    resultId = full_match.Find(u => u.searchStart == (full_match.Min(i => i.searchStart))).userId;
                 }
-                
+                else resultId = full_match.First().userId;
+                var bytes = Encoding.ASCII.GetBytes(resultId);
+                var arraySegment = new ArraySegment<byte>(bytes);
+                await webSocket.SendAsync(arraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
+                Thread.Sleep(2000); //sleeping so that we can see several messages are sent
             }
-            
         }
 
         void UpdateSearchList(string searchId, string gender, int age_max, int age_min, DateTime searchStart)
@@ -97,12 +153,18 @@ namespace AnonChat.UI.Controllers
                 searchList.Add(new SearchIds { connId = chatHub.GetConnectionId(), userId = searchId, gender = gender, age_max = age_max, age_min = age_min });
             }
         }
-        public static void CallToChildThread()
+        [HttpGet("{userId}")]
+        public async Task<Object> GetUserProfile(string userId)
         {
-            Console.WriteLine("Child thread starts");
+            var user = await accountService.FindUserById(userId);
+            return new
+            {
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.BirthDay,
+                user.Gender
+            };
         }
-            
-        }
-
     }
 }

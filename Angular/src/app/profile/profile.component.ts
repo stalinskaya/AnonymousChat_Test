@@ -1,5 +1,5 @@
 import { UserService } from './../shared/user.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, RootRenderer } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
@@ -13,7 +13,7 @@ export class ProfileComponent implements OnInit {
   selectedFile = null;
   visibleDetailsUser = true;
 
-  constructor(private router: Router, private service: UserService, private toastr: ToastrService) { }
+  constructor(private route: Router, private service: UserService, private toastr: ToastrService) { console.log(this.route); }
 
   selectedLevel;
   data = ["female", "male", "no matter" ];
@@ -34,16 +34,29 @@ export class ProfileComponent implements OnInit {
   }
 
   imageUrl: string = "/assets/img/add.jpg";
-  url = '';
-  onSelectFile(event) {
-    if (event.target.files && event.target.files[0]) {
-      var reader = new FileReader();
+  fileToUpload: File = null;
 
-      reader.readAsDataURL(event.target.files[0]); // read file as data url
-      reader.onload = (event) => { // called once readAsDataURL is completed
-        
-      }
+  handleFileInput(file: FileList) {
+    this.fileToUpload = file.item(0);
+
+    var reader = new FileReader();
+    reader.onload = (event: any) => {
+      this.imageUrl = event.target.result;
     }
+    reader.readAsDataURL(this.fileToUpload);
+  }
+
+  onChangeImage() {
+    this.service.postFile(this.fileToUpload).subscribe(
+      (res: any) => {
+        console.log('done');
+        this.ngOnInit();
+        this.toastr.success('Update!', 'Edit user infrormation successful.');
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   onEditUser() {
@@ -67,9 +80,11 @@ export class ProfileComponent implements OnInit {
     )
   }
   
+
+
   onLogout() {
     localStorage.removeItem('token');
-    this.router.navigate(['/user/login']);
+    //this.route.url(['/user/login']);
   }
 
 }

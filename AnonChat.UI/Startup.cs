@@ -119,6 +119,7 @@ namespace AnonChat.UI
                     }
                 };
             });
+            
             services.AddSignalR();
         }
 
@@ -149,6 +150,13 @@ namespace AnonChat.UI
             {
                 routes.MapHub<ChatHub>("/chats/dialog");
             });
+            var webSocketOptions = new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(30),
+                ReceiveBufferSize = 4 * 1024
+            };
+
+            app.UseWebSockets(webSocketOptions);
             app.UseMvc();
 
         }

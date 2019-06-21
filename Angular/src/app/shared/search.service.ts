@@ -24,4 +24,7 @@ export class SearchService {
     };
     return this.http.post(this.BaseURI + '/chat/UserSearch', body);
   }
+  getUserProfile(id) {
+    return this.http.get(this.BaseURI + '/User/', id);
+  }
 }

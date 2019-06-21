@@ -37,7 +37,19 @@ export class SearchComponent implements OnInit {
     if(isFormValid) {
       this.service.search().subscribe(
         (res: any) => {
-            this.service.formModel.reset();
+          (function() {
+            var getWebSocketId = function(onIdReceived)
+            {
+                var url = `ws://localhost:44355/api/usersearch`
+                console.log('url is: ' + url);
+                var webSocket = new WebSocket(url);
+                webSocket.onmessage = onIdReceived;
+            };
+            getWebSocketId(function (id) {
+              this.service.getUserProfile(id);
+          });
+          }());
+          
         },
         err => {
           console.log(err);
