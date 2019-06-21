@@ -82,6 +82,14 @@ namespace AnonChat.BLL.Services
                 return user;
             return null;
         }
+
+        public ApplicationUser FindUserByIdNoAsync(string userId)
+        {
+            var user = UserManager.FindByIdAsync(userId);
+            if (user.Result != null)
+                return user.Result;
+            return null;
+        }
         public void EditUserStatus(ApplicationUser user, bool status)
         {
             user.StatusSearch = status;

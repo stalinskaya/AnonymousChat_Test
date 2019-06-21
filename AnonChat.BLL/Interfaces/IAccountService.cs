@@ -12,6 +12,7 @@ namespace AnonChat.BLL.Interfaces
         Task<object> Create(ApplicationUser newUser, string password, string url);
         Task<object> Login(ApplicationUser new_user, string password);
         Task<ApplicationUser> FindUserById(string userId);
+        ApplicationUser FindUserByIdNoAsync(string userId);
         Task<ApplicationUser> FindUserByName(string userName);
         Task<ApplicationUser> FindUserByEmail(string email);
         Task<OperationDetails> ConfirmEmail(ApplicationUser user, string code);

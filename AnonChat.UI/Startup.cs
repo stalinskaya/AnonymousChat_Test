@@ -45,7 +45,7 @@ namespace AnonChat.UI
                 options.CheckConsentNeeded = context => true; // consent required
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            services.AddMemoryCache();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<ChatContext>(options =>
@@ -75,7 +75,6 @@ namespace AnonChat.UI
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IFileService, FileService>();
-            services.AddScoped<IChatHub, ChatHub>();
 
 
             services.AddCors();
