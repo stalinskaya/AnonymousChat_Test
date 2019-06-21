@@ -61,8 +61,7 @@ namespace AnonChat.UI.Controllers
                 age_min = searchViewModel.AgeMin,
                 searchStart = DateTime.Now
             };
-            _searchList.Remove(userId);
-            _searchList.Add(userId, searchline);
+            _searchList[userId] = searchline;
             await Task.Run(() =>
             {
                 var isEnd = false;
@@ -71,15 +70,15 @@ namespace AnonChat.UI.Controllers
                     while (!isEnd)
                     {
                         List<SearchLine> list = new List<SearchLine>();
-                        var searchingRN = _searchList.Select(d=>d.Value).ToList().FindAll(u => EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) >= u.age_min &&
+                        var searchingRightNow = _searchList.Select(d=>d.Value).ToList().FindAll(u => EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) >= u.age_min &&
                                                                   EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) <= u.age_max &&
                                                                   u.gender == searchline.user.Gender && u.user.Id != searchline.user.Id);
                         var full_match = new List<SearchLine>();
-                        if (searchingRN.Any())
+                        if (searchingRightNow.Any())
                         {
-                            full_match = searchingRN.FindAll(u => EF.Functions.DateDiffYear(user.BirthDay, DateTime.Today) >= u.age_min &&
-                                                                      EF.Functions.DateDiffYear(user.BirthDay, DateTime.Today) <= u.age_max &&
-                                                                      u.gender == (user.Gender) && u.user.Id != searchline.user.Id);
+                            full_match = searchingRightNow.FindAll(u => EF.Functions.DateDiffYear(u.user.BirthDay, DateTime.Today) >= searchline.age_min &&
+                                                                      EF.Functions.DateDiffYear(u.user.BirthDay, DateTime.Today) <= searchline.age_max &&
+                                                                      searchline.gender == (u.user.Gender) );
                         }
 
 
