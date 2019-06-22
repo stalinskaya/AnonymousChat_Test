@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import * as signalR from "@aspnet/signalr";
+import { HttpTransportType } from '@aspnet/signalr';
+
 
 @Component({
   selector: 'app-chats',
@@ -8,9 +11,10 @@ import { Router } from '@angular/router';
 })
 export class ChatsComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private router: ActivatedRoute) { }
 
   ngOnInit() {
+    
   }
 
 }

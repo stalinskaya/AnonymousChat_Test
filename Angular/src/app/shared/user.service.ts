@@ -62,6 +62,7 @@ export class UserService {
   getUserProfile() {
     return this.http.get(this.BaseURI + '/User');
   }
+  
 
   updateUserProfile() {
     var body = {

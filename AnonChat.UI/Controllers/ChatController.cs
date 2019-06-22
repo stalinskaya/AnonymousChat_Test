@@ -40,9 +40,10 @@ namespace AnonChat.UI.Controllers
         public readonly IAccountService accountService;
         public readonly IChatService chatService;
 
-        public ChatController(IAccountService accountService)
+        public ChatController(IAccountService accountService, IChatService chatService)
         {
             this.accountService = accountService;
+            this.chatService = chatService;
         }
 
         static List<string> UserIds = new List<string>();
@@ -70,15 +71,17 @@ namespace AnonChat.UI.Controllers
                     while (!isEnd)
                     {
                         List<SearchLine> list = new List<SearchLine>();
-                        var searchingRightNow = _searchList.Select(d=>d.Value).ToList().FindAll(u => EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) >= u.age_min &&
-                                                                  EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) <= u.age_max &&
-                                                                  u.gender == searchline.user.Gender && u.user.Id != searchline.user.Id);
+                        var searchingRightNow = _searchList.Select(d => d.Value).ToList().FindAll(u => EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) >= u.age_min &&
+                                                                    EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) <= u.age_max &&
+                                                                    u.gender == searchline.user.Gender &&
+                                                                    EF.Functions.DateDiffSecond(u.searchStart, DateTime.Today) <= 30
+                                                                    && u.user.Id != searchline.user.Id);
                         var full_match = new List<SearchLine>();
                         if (searchingRightNow.Any())
                         {
                             full_match = searchingRightNow.FindAll(u => EF.Functions.DateDiffYear(u.user.BirthDay, DateTime.Today) >= searchline.age_min &&
                                                                       EF.Functions.DateDiffYear(u.user.BirthDay, DateTime.Today) <= searchline.age_max &&
-                                                                      searchline.gender == (u.user.Gender) );
+                                                                      searchline.gender == (u.user.Gender));
                         }
 
 
@@ -99,7 +102,7 @@ namespace AnonChat.UI.Controllers
                     Thread.Sleep(5000);
 
                     if (child.IsCompleted)
-                    { 
+                    {
                         break;
                     }
                 }
@@ -121,5 +124,32 @@ namespace AnonChat.UI.Controllers
                 user.Gender
             };
         }
+
+        //[HttpGet, Route("GetAllDialogs")]
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var userId = User.Claims.First(c => c.Type == "UserID").Value;
+        //    var dialogs = await chatService.FindAllDialogs(userId);
+        //    if (dialogs == null)
+        //    {
+        //        return BadRequest(new { message = "Error, you have no dialogs yet" });
+        //    }
+
+        //    var result = GetAllDialogsViewModel.MapToViewModels(userId, dialogs).ToList();
+
+        //    return Ok(result);
+        //}
+
+        ////GET: api/dialog/DialogDetails/id
+        //[HttpGet, Route("DialogDetails/{id}")]
+        //public IActionResult Get(int id)
+        //{
+        //    var userId = User.Claims.First(c => c.Type == "UserID").Value;
+        //    var dialog = _dialogService.FindDialog(id);
+
+        //    var result = DetailsDialogViewModel.MapToViewModel(dialog.Messages, userId).ToList();
+
+        //    return Ok(result);
+        //}
     }
 }

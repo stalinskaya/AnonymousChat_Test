@@ -5,6 +5,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { Ng4LoadingSpinnerModule} from 'ng4-loading-spinner';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +19,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { SearchComponent } from './home/search/search.component';
 import { ChatsComponent } from './home/chats/chats.component';
 import { DialogComponent } from './home/chats/dialog/dialog.component';
+import { UserProfileComponent } from './home/user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,8 @@ import { DialogComponent } from './home/chats/dialog/dialog.component';
     ProfileComponent,
     SearchComponent,
     ChatsComponent,
-    DialogComponent
+    DialogComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +45,8 @@ import { DialogComponent } from './home/chats/dialog/dialog.component';
     }),
     FormsModule,
     BrowserAnimationsModule,
-    NgbModule
+    NgbModule,
+    Ng4LoadingSpinnerModule.forRoot()
   ],
   exports: [
     BrowserAnimationsModule
