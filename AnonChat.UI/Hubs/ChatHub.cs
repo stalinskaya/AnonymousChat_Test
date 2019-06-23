@@ -1,7 +1,5 @@
 ﻿using AnonChat.BLL.Interfaces;
 using AnonChat.DAL.EF;
-using AnonChat.Models;
-using AnonChat.UI.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -22,7 +20,7 @@ namespace AnonChat.BLL.Hubs
     }
 
     [Authorize]
-    public class ChatHub : Hub, IChatHub
+    public class ChatHub : Hub
     {
         public readonly IAccountService accountService;
         public readonly IChatService chatService;
@@ -34,7 +32,7 @@ namespace AnonChat.BLL.Hubs
             this.chatService = chatService;
         }
 
-        static List<UserIds> usersList = new List<UserIds>();
+        public static List<UserIds> usersList = new List<UserIds>();
 
         public async override Task OnConnectedAsync()
         {
@@ -47,7 +45,7 @@ namespace AnonChat.BLL.Hubs
         {
             UserIds receiver, caller;
             FindCallerReceiverByIds(receiverId, out caller, out receiver);
-            await chatService.AddMessageAsync(caller.userId, receiverId, message);
+            await chatService.AddChatMessageAsync(caller.userId, message);
             await Clients.Client(caller.connId).SendAsync("Send Myself", message);
             if (receiver != null)
                 await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
@@ -60,13 +58,13 @@ namespace AnonChat.BLL.Hubs
             bool chatRoomExist = chatService.ExistChat(caller.userId, receiverId);
             if (chatRoomExist)
             {
-                await chatService.AddMessageAsync(caller.userId, receiverId, message);
+                await chatService.AddChatMessageAsync(caller.userId, message);
                 await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
             }
             else
             {
                 await chatService.AddChatAsync(receiverId, caller.userId);
-                await chatService.AddMessageAsync(caller.userId, receiverId, message);
+                await chatService.AddChatMessageAsync(caller.userId, message);
                 await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
             }
         }

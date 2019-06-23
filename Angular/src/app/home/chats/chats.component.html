@@ -1,1 +1,22 @@
-<router-outlet></router-outlet>
+<div class="main">
+
+    <div class="row">
+  
+      <div class="col-md-4">
+        <div>
+          <div *ngFor="let dialog of userList" >
+            <hr>
+            <div class="row" >
+              <div class="col-md-2" style="text-align: center">
+                Кто-то
+              </div>
+              <div class="col-md-10" (click)="onOpenDialog(dialog.UserId, dialog.DialogId)" style="text-align: center">
+                {{dialog.UserId}}
+              </div>
+              <hr>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+    </div>

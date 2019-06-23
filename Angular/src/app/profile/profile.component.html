@@ -30,7 +30,7 @@
         <li class="list-group-item"><strong>FirstName : </strong>{{userDetails.firstName}}</li>
         <li class="list-group-item"><strong>LastName : </strong>{{userDetails.lastName}}</li>
         <li class="list-group-item"><strong>Gender : </strong>{{userDetails.gender}}</li>
-        <li class="list-group-item"><strong>Birthday : </strong>{{userDetails.birthday}}</li>
+        <li class="list-group-item"><strong>Birthday : </strong>{{userDetails.birthday | date:'MMM d, y, h:mm:ss a' }}</li>
         <li class="list-group-item"><strong>Email : </strong>{{userDetails.email}}</li>
       </ul>
       <button type="button" class="btn btn-outline-danger btn-block" (click)="onEditUser()" style="margin-top: 2%;">Change Info</button> 

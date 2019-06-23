@@ -12,10 +12,6 @@ namespace AnonChat.Models
         [ForeignKey("ApplicationUser")]
         public string SenderId { get; set; }
         public virtual ApplicationUser Sender { get; set; }
-
-        [ForeignKey("ApplicationUser")]
-        public string ReceiverId { get; set; }
-        public virtual ApplicationUser Receiver { get; set; }
         [ForeignKey("Chat")]
         public string ChatId { get; set; }
         public virtual Chat Chat { get; set; }

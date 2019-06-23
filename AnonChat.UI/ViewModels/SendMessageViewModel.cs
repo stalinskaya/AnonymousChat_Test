@@ -13,7 +13,11 @@ namespace AnonChat.UI.ViewModels
         public string Message { get; set; }
 
         [Required]
-        [Display(Name = "SenderName")]
-        public string SenderName { get; set; }
+        [Display(Name = "ReceiverId")]
+        public string ReceiverId { get; set; }
+
+        [Required]
+        [Display(Name = "ChatID")]
+        public string ChatId { get; set; }
     }
 }

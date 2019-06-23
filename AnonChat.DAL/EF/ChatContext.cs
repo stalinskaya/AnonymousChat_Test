@@ -63,11 +63,6 @@ namespace AnonChat.DAL.EF
                 .OnDelete(DeleteBehavior.SetNull);
 
             builder.Entity<ChatMessage>()
-                .HasOne<ApplicationUser>(m => m.Receiver)
-                .WithMany(u => u.ReceivedMessages)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            builder.Entity<ChatMessage>()
                 .HasOne<Chat>(m => m.Chat)
                 .WithMany(u => u.Messages)
                 .OnDelete(DeleteBehavior.SetNull);

@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import {ActivatedRoute} from '@angular/router';
 import {HubConnection, HttpTransportType} from '@aspnet/signalr';
-import * as signalR from '@aspnet/signalr';
+import { ChatService } from 'src/app/shared/chat.service';
+import { MessageInfo } from 'src/app/models/MessageInfo';
+import { SignalRService } from 'src/app/shared/signal-r.service';
+import { Message } from 'src/app/models/Message';
 
 @Component({
   selector: 'app-dialog',
@@ -11,100 +14,69 @@ import * as signalR from '@aspnet/signalr';
 })
 
 export class DialogComponent implements OnInit {
-  public _hubConnection: HubConnection;
-  public message: string;
-  public _hubConnecton: HubConnection;
-  // msgs: Message[] = [];
-  private token = localStorage.getItem('token');
 
-constructor(private activatedRoute: ActivatedRoute) { }
+  @Input() userId: string;
+  @Input() dialogId: number;
+
+  constructor(private activateRoute: ActivatedRoute,
+    public signalR: SignalRService,
+    private router: Router,
+    public service: ChatService) { }
+
+  message = '';
+  messages: Message[] = new Array();
+  messagesRealTime: Message[] = new Array();
+  
+  incomingMessage =  new Message();
+
+  visibleDropZone = true;
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe((params) => {
-      console.log(params['userId'])});
-      
-    
-    // this.startConnection();
-    //   this.service.getUserDialogs().subscribe(
-    //     res => {
-    //       this.userList = res;
-    //     },
-    //     err => {
-    //       console.log(err);
-    //     }
-    //   );
+    this.signalR.startConnection();
+    this.addSendListener();
+    this.addSendMyselfListener();
+
+    this.service.getDetailsUserDialogs(this.dialogId).subscribe(
+      res => {
+        this.messages = res as Message[];
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+
+  addSendListener() {
+    this.signalR.hubConnection.on('Send', (data) => {    
+      this.incomingMessage = data as Message;
+      this.messagesRealTime.push(this.incomingMessage);
+    });
+  }
+
+  addSendMyselfListener() {
+      this.signalR.hubConnection.on('SendMyself', (data) => {
+        debugger;
+        this.incomingMessage = data as Message;
+        this.messagesRealTime.push(this.incomingMessage);
+    });
+  }
+
+  addNewDialogListener() {
+      this.signalR.hubConnection.on('AddNewDialog', (data) => {
+        this.incomingMessage = data as Message;
+        this.messagesRealTime.push(this.incomingMessage);
+    });
+  }
+
+  onSendMessage() {
+    debugger;
+    var outgoingMessage  = new MessageInfo();
+    outgoingMessage.DialogId = this.dialogId;
+    outgoingMessage.ReceiverId = this.userId;
+    outgoingMessage.Message = this.message;
+
+    console.log(this.dialogId, this.userId, this.message);
+
+    this.service.sendMessage(outgoingMessage).subscribe();
   }
 }
-
-    
-  // public startConnection = () => {
-  //       this.hubConnection = new signalR.HubConnectionBuilder()
-  //           .withUrl('https://localhost:44355/chat',
-  //               { 
-  //                   skipNegotiation: true, 
-  //                   transport: HttpTransportType.WebSockets,
-  //                   accessTokenFactory: () => this.token
-  //               })
-  //           .build();
-
-  //       this.hubConnection
-  //           .start()
-  //           .then(() => console.log('Connection started'))
-  //           .catch(err => console.log('Error while starting connection: ' + err))
-  //   }
-  //   message = '';
-  //   //messages: string[] = [];
-  
-  //   messages: Message[] = new Array();
-  //   outgoingMessage  = new MessageInfo();
-  
-  //   //messagesFromDb;
-  
-  //   ngOnInit() {
-  //     this.signalR.startConnection();
-  //     this.addSendListener();
-  //     this.addSendMyselfListener();
-  
-  //     this.service.getDetailsUserDialogs(this.dialogId).subscribe(
-  //       res => {
-  //         // this.messagesFromDb = res;
-  //         this.messages = res as Message[];
-  //       },
-  //       err => {
-  //         console.log(err);
-  //       }
-  //     )
-  //   }
-  
-  //   addSendListener() {
-  //     this.hubConnection.on('Send', (data) => {
-  //       this.incomingMessage = data as Message;
-  //       this.messages.push(this.signalR.incomingMessage);
-  //       // this.messages.push(message);
-  //     });
-  //   }
-  
-  //   addSendMyselfListener() {
-  //     this.hubConnection.on('SendMyself', (data) => {
-  //       this.signalR.incomingMessage = data as Message;
-  //       this.messages.push(this.signalR.incomingMessage);
-        
-  //       // this.messages.push(message);
-  //     });
-  //   }
-  
-  //   addNewDialogListener() {
-  //     this.hubConnection.on('AddNewDialog', (data) => {
-  //       this.signalR.incomingMessage = data as Message;
-  //       this.messages.push(this.signalR.incomingMessage);
-  
-  //       // this.messages.push(message);
-  //     });
-  //   }
-  
-  //   onSendMessage() {
-  //     this.outgoingMessage.DialogId = this.dialogId;
-  //     this.outgoingMessage.ReceiverId = this.userId;
-  //     this.outgoingMessage.Message = this.message;
-  //     this.Send(this.outgoingMessage);
-  //   }

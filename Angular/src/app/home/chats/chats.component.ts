@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import * as signalR from "@aspnet/signalr";
-import { HttpTransportType } from '@aspnet/signalr';
+import { SignalRService } from 'src/app/shared/signal-r.service';
+import { Router } from '@angular/router';
+import { ChatService } from 'src/app/shared/chat.service';
 
 
 @Component({
@@ -10,11 +10,32 @@ import { HttpTransportType } from '@aspnet/signalr';
   styles: []
 })
 export class ChatsComponent implements OnInit {
+  dialogList;
+  UserId;
+  DialogId;
+  visibleChatDetails = true;
 
-  constructor(private router: ActivatedRoute) { }
+  constructor(public signalR: SignalRService,
+    public service: ChatService,
+    private router: Router) { }
 
   ngOnInit() {
-    
+    this.signalR.startConnection();
+
+    this.service.getUserDialogs().subscribe(
+      res => {
+        this.dialogList = res;
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  onOpenDialog(userId: string, dialogId: number) {
+    this.UserId = userId;
+    this.DialogId = dialogId;
+    this.visibleChatDetails = !this.visibleChatDetails;
   }
 
 }

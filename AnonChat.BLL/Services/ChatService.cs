@@ -26,8 +26,7 @@ namespace AnonChat.BLL.Services
         {
             var chat1 = Database.UserChats.Find(i => i.UserId == userid_1);
             var chat2 = Database.UserChats.Find(i => i.UserId == userid_2);
-            if (chat1.Intersect(chat2).Any()) return true;
-            else return false;
+            return chat1.Intersect(chat2).Any();
         }
 
         public async Task AddChatAsync(string userid_1, string userid_2)
@@ -60,27 +59,54 @@ namespace AnonChat.BLL.Services
             Database.Save();
         }
 
-        public async Task AddMessageAsync(string userId, string receiverId, string content)
+        public async Task AddChatMessageAsync(string userId,  string content)
         {
-            var receiver = await UserManager.FindByIdAsync(receiverId);
             var sender = await UserManager.FindByIdAsync(userId);
             var message = new ChatMessage
             {
-                Receiver = receiver,
                 Sender = sender,
                 Content = content,
-                SendingTime = DateTime.Now,
-
+                SendingTime = DateTime.Now
             };
             Database.ChatMessages.Create(message);
             Database.Save();
         }
 
-        //public IEnumerable<ChatMessage> GetChatMessages(string senderId, string recieverId)
-        //{
-        //    var query = Database.ChatMessages.Find(c => c.SenderId == senderId && c.ReceiverId == recieverId);
-        //    query = query.OrderBy(m => m.SendingTime);
-        //    return (query.ToList());
-        //}
+        public async Task<List<Chat>> FindAllDialogs(string userId)
+        {
+            var user = await UserManager.FindByIdAsync(userId);
+            var chats = Database.UserChats.Find(i => i.UserId == userId).Select(d=>d.Chat).ToList();
+            return chats;
+        }
+
+        public ChatMessage AddChatMessage(string userId, string message, string chatId/*, IFormFileCollection files*/)
+        {
+            
+            var newMessage = new ChatMessage
+            {
+                SenderId = userId,
+                ChatId = chatId,
+                Content = message,
+                SendingTime = DateTime.Now
+            };
+
+            Database.ChatMessages.Create(newMessage);
+            Database.Save();
+            return newMessage;
+        }
+        
+        public Chat GetDialog(string chatId)
+        {
+            try
+            {
+                var chat = Database.Chats.Find(i => i.ChatID == chatId).FirstOrDefault() ;
+
+                return chat;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }

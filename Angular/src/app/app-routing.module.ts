@@ -28,7 +28,7 @@ const routes: Routes = [
       {path: 'search', component: SearchComponent},
       {path: 'chats', component: ChatsComponent,
         children: [
-          {path: 'dialog', component: DialogComponent}
+          {path: 'dialog/', component: DialogComponent}
         ]
       },
       { path: 'user-profile/:id', component: UserProfileComponent, canActivate:[AuthGuard] }

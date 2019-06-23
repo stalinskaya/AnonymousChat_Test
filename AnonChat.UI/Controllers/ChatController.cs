@@ -8,14 +8,15 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using AnonChat.BLL.Hubs;
 using AnonChat.BLL.Interfaces;
 using AnonChat.Models;
-using AnonChat.UI.Hubs;
 using AnonChat.UI.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -39,14 +40,14 @@ namespace AnonChat.UI.Controllers
 
         public readonly IAccountService accountService;
         public readonly IChatService chatService;
+        private readonly IHubContext<ChatHub> chatHub;
 
-        public ChatController(IAccountService accountService, IChatService chatService)
+        public ChatController(IAccountService accountService, IChatService chatService, IHubContext<ChatHub> chatHub)
         {
             this.accountService = accountService;
             this.chatService = chatService;
+            this.chatHub = chatHub;
         }
-
-        static List<string> UserIds = new List<string>();
 
         [HttpPost("UserSearch")]
         public async Task<Object> UserSearch([FromBody] SearchViewModel searchViewModel)
@@ -125,31 +126,70 @@ namespace AnonChat.UI.Controllers
             };
         }
 
-        //[HttpGet, Route("GetAllDialogs")]
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    var userId = User.Claims.First(c => c.Type == "UserID").Value;
-        //    var dialogs = await chatService.FindAllDialogs(userId);
-        //    if (dialogs == null)
-        //    {
-        //        return BadRequest(new { message = "Error, you have no dialogs yet" });
-        //    }
+       
 
-        //    var result = GetAllDialogsViewModel.MapToViewModels(userId, dialogs).ToList();
+        //GET: api/dialog/GetAllDialogs
+        [HttpGet, Route("GetAllDialogs")]
+        public async Task<IActionResult> GetAll()
+        {
+            var userId = User.Claims.First(c => c.Type == "UserID").Value;
+            var dialogs = await chatService.FindAllDialogs(userId);
+            if (dialogs == null)
+            {
+                return BadRequest(new { message = "Error, you have no dialogs yet" });
+            }
+            return Ok(dialogs);
+        }
 
-        //    return Ok(result);
-        //}
+        //GET: api/dialog/DialogDetails/id
+        [HttpGet, Route("DialogDetails/{id}")]
+        public IActionResult Get(string chatId)
+        {
+            var userId = User.Claims.First(c => c.Type == "UserID").Value;
+            var dialog = chatService.GetDialog(chatId);
+            var result = dialog.Messages.ToList();
+            return Ok(result);
+        }
 
-        ////GET: api/dialog/DialogDetails/id
-        //[HttpGet, Route("DialogDetails/{id}")]
-        //public IActionResult Get(int id)
-        //{
-        //    var userId = User.Claims.First(c => c.Type == "UserID").Value;
-        //    var dialog = _dialogService.FindDialog(id);
+        //POST: api/dialog/SendMessage
+        [HttpPost, Route("SendMessage")]
+        public async Task<IActionResult> SendMessage([FromBody] SendMessageViewModel model)
+        {
+            try
+            {
+                UserIds receiver, caller;
+                FindCallerReceiverByIds(model.ReceiverId, out caller, out receiver);
 
-        //    var result = DetailsDialogViewModel.MapToViewModel(dialog.Messages, userId).ToList();
+                var newMessage = chatService.AddChatMessage(caller.userId, model.Message, model.ChatId);
+                var dialog = chatService.GetDialog(model.ChatId);
 
-        //    return Ok(result);
-        //}
+                await chatHub.Clients.Client(caller.connId).SendAsync("SendMyself", newMessage);
+
+                if (receiver != null)
+                {
+                    await chatHub.Clients.Client(receiver.connId)
+                        .SendAsync("Send", newMessage, caller.userId);
+
+                    //await Clients.Client(receiver.ConnId).SendAsync("SoundNotify", "");
+                }
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        private void FindCallerReceiverByIds(string receiverId, out UserIds caller, out UserIds receiver)
+        {
+            var connId = ChatHub.usersList
+                .Where(x => x.userId == User.Claims.First(c => c.Type == "UserID").Value)
+                .Select(x => x.connId)
+                .First();
+
+            receiver = ChatHub.usersList.Find(r => r.userId == receiverId);
+            caller = ChatHub.usersList.Find(c => c.connId == connId);
+        }
     }
 }
