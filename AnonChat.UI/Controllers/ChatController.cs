@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -36,8 +37,8 @@ namespace AnonChat.UI.Controllers
     [ApiController]
     public class ChatController : ControllerBase
     {
-        private static Dictionary<string, SearchLine> _searchList = new Dictionary<string, SearchLine>();
-
+        //Потокобезопасный словарь
+        private static ConcurrentDictionary<string, SearchLine> _searchList = new ConcurrentDictionary<string, SearchLine>();
 
         public readonly IAccountService accountService;
         public readonly IChatService chatService;
@@ -64,32 +65,47 @@ namespace AnonChat.UI.Controllers
                 age_min = searchViewModel.AgeMin,
                 searchStart = DateTime.Now
             };
-            _searchList[userId] = searchline;
+
+            while(true)
+            {
+                bool isAdded = _searchList.TryAdd(userId, searchline);
+                if (isAdded)
+                    break;
+            }
+
             await Task.Run(() =>
             {
                 var isEnd = false;
                 var child = Task.Run(() =>
                 {
+                    const int numberOfSecondsToWait = 30;
+
                     while (!isEnd)
                     {
-                        List<SearchLine> list = new List<SearchLine>();
-                        var searchingRightNow = _searchList.Select(d => d.Value).ToList().FindAll(u => EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) >= u.age_min &&
-                                                                    EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) <= u.age_max &&
-                                                                    u.gender == searchline.user.Gender &&
-                                                                    EF.Functions.DateDiffSecond(u.searchStart, DateTime.Today) <= 30
-                                                                    && u.user.Id != searchline.user.Id);
-                        var full_match = new List<SearchLine>();
+                        //Находим других юзеров, которые ищут нас
+                        //Оптимизируем поиск используя распаралелливание по ядрам процессора
+                        ParallelQuery<SearchLine> searchingRightNow = _searchList.Select(d => d.Value)
+                        .AsParallel()
+                        .WithDegreeOfParallelism(Environment.ProcessorCount)
+                        .Where(u => EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) >= u.age_min &&
+                                                   EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) <= u.age_max &&
+                                                   u.gender == searchline.user.Gender &&
+                                                   EF.Functions.DateDiffSecond(u.searchStart, DateTime.Now) <= numberOfSecondsToWait
+                                                   && u.user.Id != searchline.user.Id);
+
+                        List<SearchLine> full_match = new List<SearchLine>();
                         if (searchingRightNow.Any())
                         {
-                            full_match = searchingRightNow.FindAll(u => EF.Functions.DateDiffYear(u.user.BirthDay, DateTime.Today) >= searchline.age_min &&
+                            //Выбираем из юзеров, которые искали нас тех, кого мы ищем
+                            full_match = searchingRightNow.Where(u => EF.Functions.DateDiffYear(u.user.BirthDay, DateTime.Today) >= searchline.age_min &&
                                                                       EF.Functions.DateDiffYear(u.user.BirthDay, DateTime.Today) <= searchline.age_max &&
-                                                                      searchline.gender == (u.user.Gender));
+                                                                      searchline.gender == u.user.Gender)
+                                                                      .ToList();
                         }
-
 
                         if (full_match.Count > 1)
                         {
-                            resultId = full_match.OrderBy(sl => sl.searchStart).FirstOrDefault().user.Id;
+                            resultId = full_match.OrderBy(sl => sl.searchStart).First().user.Id;
                             break;
                         }
                         else if (full_match.Count == 1)
@@ -97,8 +113,11 @@ namespace AnonChat.UI.Controllers
                             resultId = full_match.First().user.Id;
                             break;
                         }
+
+                        Thread.Sleep(500); //для оптимизации работы ЦП
                     }
                 });
+
                 for (int i = 0; i < 6; i++)
                 {
                     Thread.Sleep(5000);
@@ -108,7 +127,16 @@ namespace AnonChat.UI.Controllers
                         break;
                     }
                 }
+
                 isEnd = true;
+
+                //Удалить юзера из списка после окончания поиска
+                while(true)
+                {
+                   bool isRemoved = _searchList.TryRemove(userId, out var removedSearchLine);
+                   if (isRemoved)
+                      break;
+                }
             });
             return JsonConvert.SerializeObject(resultId);
         }
