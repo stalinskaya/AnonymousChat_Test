@@ -6,7 +6,6 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
   providedIn: 'root'
 })
 export class SearchService {
-
   constructor(private fb: FormBuilder, private http: HttpClient) { }
   readonly BaseURI = 'https://localhost:44355/api';
 
@@ -24,7 +23,8 @@ export class SearchService {
     };
     return this.http.post(this.BaseURI + '/chat/UserSearch', body);
   }
-  getUserProfile(id) {
-    return this.http.get(this.BaseURI + '/User/', id);
+  getUserChat(id) {
+    return this.http.get(this.BaseURI + '/chat/DialogDetails/', id);
   }
+  
 }

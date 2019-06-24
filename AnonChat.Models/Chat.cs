@@ -9,7 +9,14 @@ namespace AnonChat.Models
     {
         public string ChatID { get; set; }
         public virtual ICollection<ChatMessage> Messages { get; set; }
-        public virtual ICollection<UserChat> UserChats { get; set; }
+
+        [ForeignKey("ApplicationUser")]
+        public string SenderId { get; set; }
+        public virtual ApplicationUser Sender { get; set; }
+
+        [ForeignKey("ApplicationUser")]
+        public string ReceiverId { get; set; }
+        public virtual ApplicationUser Receiver { get; set; }
         public bool StatusBlock { get; set; }
         public bool StatusAnonymity { get; set; }
 

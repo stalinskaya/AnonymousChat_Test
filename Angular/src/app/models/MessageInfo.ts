@@ -1,6 +1,6 @@
 export class MessageInfo{
     ReceiverId: string;
-    DialogId: number;
+    DialogId: string;
     Message: string;
     //Files: File[] = new Array();
 }

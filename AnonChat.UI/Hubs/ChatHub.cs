@@ -19,7 +19,6 @@ namespace AnonChat.BLL.Hubs
         
     }
 
-    [Authorize]
     public class ChatHub : Hub
     {
         public readonly IAccountService accountService;
@@ -41,33 +40,33 @@ namespace AnonChat.BLL.Hubs
             await base.OnConnectedAsync();
         }
 
-        public async Task Send(string message, string receiverId)
-        {
-            UserIds receiver, caller;
-            FindCallerReceiverByIds(receiverId, out caller, out receiver);
-            await chatService.AddChatMessageAsync(caller.userId, message);
-            await Clients.Client(caller.connId).SendAsync("Send Myself", message);
-            if (receiver != null)
-                await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
-        }
+        //public async Task Send(string message, string receiverId)
+        //{
+        //    UserIds receiver, caller;
+        //    FindCallerReceiverByIds(receiverId, out caller, out receiver);
+        //    await chatService.AddChatMessageAsync(caller.userId, message);
+        //    await Clients.Client(caller.connId).SendAsync("Send Myself", message);
+        //    if (receiver != null)
+        //        await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
+        //}
 
-        public async Task SendFaraway(string message, string receiverId)
-        {
-            UserIds receiver, caller;
-            FindCallerReceiverByIds(receiverId, out caller, out receiver);
-            bool chatRoomExist = chatService.ExistChat(caller.userId, receiverId);
-            if (chatRoomExist)
-            {
-                await chatService.AddChatMessageAsync(caller.userId, message);
-                await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
-            }
-            else
-            {
-                await chatService.AddChatAsync(receiverId, caller.userId);
-                await chatService.AddChatMessageAsync(caller.userId, message);
-                await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
-            }
-        }
+        //public async Task SendFaraway(string message, string receiverId)
+        //{
+        //    UserIds receiver, caller;
+        //    FindCallerReceiverByIds(receiverId, out caller, out receiver);
+        //    bool chatRoomExist = chatService.ExistChat(caller.userId, receiverId);
+        //    if (chatRoomExist)
+        //    {
+        //        await chatService.AddChatMessageAsync(caller.userId, message);
+        //        await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
+        //    }
+        //    else
+        //    {
+        //        await chatService.AddChatAsync(receiverId, caller.userId);
+        //        await chatService.AddChatMessageAsync(caller.userId, message);
+        //        await Clients.Client(receiver.connId).SendAsync("Send", message, caller.userId);
+        //    }
+        //}
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
@@ -86,17 +85,10 @@ namespace AnonChat.BLL.Hubs
                 usersList.Add(new UserIds { connId = Context.ConnectionId, userId = callerId });
             }
         }
-        public string GetConnectionId ()
-        {
-            return Context.ConnectionId;
-        }
-
         void FindCallerReceiverByIds(string receiverId, out UserIds caller, out UserIds receiver)
         {
             receiver = usersList.Find(i => i.userId == receiverId);
             caller = usersList.Find(i => i.connId == Context.ConnectionId);
         }
-
-        
     }
 }

@@ -20,8 +20,6 @@ export class ChatsComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.signalR.startConnection();
-
     this.service.getUserDialogs().subscribe(
       res => {
         this.dialogList = res;
@@ -32,10 +30,9 @@ export class ChatsComponent implements OnInit {
     );
   }
 
-  onOpenDialog(userId: string, dialogId: number) {
+  onOpenDialog(userId: string, dialogId: string) {
     this.UserId = userId;
     this.DialogId = dialogId;
     this.visibleChatDetails = !this.visibleChatDetails;
   }
-
 }

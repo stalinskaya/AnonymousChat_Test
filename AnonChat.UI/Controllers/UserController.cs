@@ -61,7 +61,7 @@ namespace AnonChat.UI.Controllers
         }
 
         [Authorize]
-        [HttpPut("EditPhoto")]
+        [HttpPost("EditPhoto")]
         public async Task<object> EditPhoto (EditPhotoViewModel editPhoto)
         {
             await fileService.EditPhoto(editPhoto.ApplicationUser, editPhoto.Photo);

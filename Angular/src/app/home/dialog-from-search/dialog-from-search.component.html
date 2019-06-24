@@ -1,0 +1,50 @@
+<div class = "container" style="height: 650px; overflow: auto;">
+  <div id="message">
+    <hr>
+
+    <div *ngIf="messages.length > 0">
+      <div *ngFor="let message of messages">
+        <div class="w3-card-4">
+          <header class="w3-container w3-white">
+            {{message.UserId}
+          </header>
+          <div class="w3-container">
+            {{message.Text}}
+          </div>
+          <footer class="w3-container w3-black">
+            {{message.Date | date:'MMM d, y, h:mm:ss a' }}
+          </footer>
+        </div>
+        <hr>
+      </div>
+    </div>
+
+    <div *ngFor="let message of messagesRealTime">
+      <div class="w3-card-4">
+        <header class="w3-container w3-white">
+          You:
+        </header>
+        <div class="w3-container">
+          {{message.text}}
+        </div>
+        <footer class="w3-container w3-black">
+          {{message.date | date:'MMM d, y, h:mm:ss a' }}
+        </footer>
+      </div>
+      <hr>
+    </div>
+  </div>
+
+<div class="container" style= "width: 60%; margin: 0 auto">
+  <form (submit)="onSendMessage()">
+    <div id="panel" style="position: fixed;  bottom: 40px;">
+      
+      <textarea rows="3" cols="75" id="message" name="message" placeholder="Enter message" [(ngModel)]="message"
+        style="resize: none;"></textarea>
+      <!-- <button type="button" style="text-align: right" class="btn btn-link" data-toggle="collapse"
+        style="text-align: right" data-target="#demo">attach photo</button> -->
+        <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Send</button>
+    </div>
+  </form>
+</div>
+</div>

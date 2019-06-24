@@ -9,7 +9,6 @@ using AnonChat.BLL.Services;
 using AnonChat.BLL.Settings;
 using AnonChat.DAL.EF;
 using AnonChat.Models;
-using AnonChat.UI.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -145,19 +144,13 @@ namespace AnonChat.UI
 
             app.UseAuthentication();
             app.UseCookiePolicy();
+            
+
+            app.UseMvc();
             app.UseSignalR(routes =>
             {
-                routes.MapHub<ChatHub>("/chats/dialog");
+                routes.MapHub<ChatHub>("/chat");
             });
-            var webSocketOptions = new WebSocketOptions()
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(30),
-                ReceiveBufferSize = 4 * 1024
-            };
-
-            app.UseWebSockets(webSocketOptions);
-            app.UseMvc();
-
         }
     }
 }

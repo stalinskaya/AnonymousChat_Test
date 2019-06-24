@@ -20,6 +20,7 @@ import { SearchComponent } from './home/search/search.component';
 import { ChatsComponent } from './home/chats/chats.component';
 import { DialogComponent } from './home/chats/dialog/dialog.component';
 import { UserProfileComponent } from './home/user-profile/user-profile.component';
+import { DialogFromSearchComponent } from './home/dialog-from-search/dialog-from-search.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { UserProfileComponent } from './home/user-profile/user-profile.component
     SearchComponent,
     ChatsComponent,
     DialogComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    DialogFromSearchComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +48,8 @@ import { UserProfileComponent } from './home/user-profile/user-profile.component
     FormsModule,
     BrowserAnimationsModule,
     NgbModule,
-    Ng4LoadingSpinnerModule.forRoot()
+    Ng4LoadingSpinnerModule.forRoot(),
+    
   ],
   exports: [
     BrowserAnimationsModule

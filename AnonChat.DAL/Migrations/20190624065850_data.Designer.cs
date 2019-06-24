@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AnonChat.DAL.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20190618085413_data")]
+    [Migration("20190624065850_data")]
     partial class data
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,11 +89,19 @@ namespace AnonChat.DAL.Migrations
                     b.Property<string>("ChatID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("ReceiverId");
+
+                    b.Property<string>("SenderId");
+
                     b.Property<int>("StatusAnonymity");
 
                     b.Property<int>("StatusBlock");
 
                     b.HasKey("ChatID");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Chats");
                 });
@@ -107,10 +115,6 @@ namespace AnonChat.DAL.Migrations
 
                     b.Property<string>("Content");
 
-                    b.Property<int>("IsReaded");
-
-                    b.Property<string>("ReceiverId");
-
                     b.Property<string>("SenderId");
 
                     b.Property<DateTime>("SendingTime");
@@ -118,8 +122,6 @@ namespace AnonChat.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId");
-
-                    b.HasIndex("ReceiverId");
 
                     b.HasIndex("SenderId");
 
@@ -175,19 +177,6 @@ namespace AnonChat.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("LogDetails");
-                });
-
-            modelBuilder.Entity("AnonChat.Models.UserChat", b =>
-                {
-                    b.Property<string>("UserId");
-
-                    b.Property<string>("ChatId");
-
-                    b.HasKey("UserId", "ChatId");
-
-                    b.HasIndex("ChatId");
-
-                    b.ToTable("UserChat");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -305,16 +294,24 @@ namespace AnonChat.DAL.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("AnonChat.Models.Chat", b =>
+                {
+                    b.HasOne("AnonChat.Models.ApplicationUser", "Receiver")
+                        .WithMany("ReceivedChats")
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("AnonChat.Models.ApplicationUser", "Sender")
+                        .WithMany("SentChats")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
             modelBuilder.Entity("AnonChat.Models.ChatMessage", b =>
                 {
                     b.HasOne("AnonChat.Models.Chat", "Chat")
                         .WithMany("Messages")
                         .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("AnonChat.Models.ApplicationUser", "Receiver")
-                        .WithMany("ReceivedMessages")
-                        .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("AnonChat.Models.ApplicationUser", "Sender")
@@ -328,19 +325,6 @@ namespace AnonChat.DAL.Migrations
                     b.HasOne("AnonChat.Models.ApplicationUser", "ApplicationUser")
                         .WithOne("Photo")
                         .HasForeignKey("AnonChat.Models.FileModel", "ApplicationUserID");
-                });
-
-            modelBuilder.Entity("AnonChat.Models.UserChat", b =>
-                {
-                    b.HasOne("AnonChat.Models.Chat", "Chat")
-                        .WithMany("UserChats")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("AnonChat.Models.ApplicationUser", "User")
-                        .WithMany("UserChats")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

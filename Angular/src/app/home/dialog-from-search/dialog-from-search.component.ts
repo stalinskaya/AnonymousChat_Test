@@ -1,19 +1,18 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import {ActivatedRoute} from '@angular/router';
-import {HubConnection, HttpTransportType} from '@aspnet/signalr';
 import { ChatService } from 'src/app/shared/chat.service';
-import { MessageInfo } from 'src/app/models/MessageInfo';
 import { SignalRService } from 'src/app/shared/signal-r.service';
 import { Message } from 'src/app/models/Message';
 
 @Component({
   selector: 'app-dialog',
-  templateUrl: './dialog.component.html',
-  styleUrls: ['./dialog.component.css']
+  templateUrl: './dialog-from-search.component.html',
+  styleUrls: ['./dialog-from-search.component.css']
 })
 
-export class DialogComponent implements OnInit {
+
+export class DialogFromSearchComponent implements OnInit {
 
   @Input() userId: string;
   @Input() dialogId: string;
@@ -31,10 +30,12 @@ export class DialogComponent implements OnInit {
 
   visibleDropZone = true;
 
-  async ngOnInit() {
-    await this.activateRoute.params.subscribe(params => this.userId = params.id);
-    this.signalR.startConnection();
-    this.addSendListener();
+async ngOnInit() {
+  
+  await this.activateRoute.params.subscribe(params => this.userId = params.userId);
+  
+  this.signalR.startConnection();
+  this.addSendListener();
     this.addSendMyselfListener();
     this.service.getDetailsUserDialogs(this.userId).subscribe(
       res => {
@@ -44,6 +45,8 @@ export class DialogComponent implements OnInit {
         console.log(err);
       }
     )
+
+    
   }
 
   addSendListener() {
@@ -67,14 +70,14 @@ export class DialogComponent implements OnInit {
     });
   }
 
-  onSendMessage() {
-    var outgoingMessage  = new MessageInfo();
-    outgoingMessage.DialogId = this.dialogId;
-    outgoingMessage.ReceiverId = this.userId;
-    outgoingMessage.Message = this.message;
+  // onSendMessage() {
+  //   var outgoingMessage  = new MessageInfo();
+  //   outgoingMessage.DialogId = this.dialogId;
+  //   outgoingMessage.ReceiverId = this.userId;
+  //   outgoingMessage.Message = this.message;
 
-    console.log(this.dialogId, this.userId, this.message);
+  //   console.log(this.dialogId, this.userId, this.message);
 
-    this.service.sendMessage(outgoingMessage).subscribe();
-  }
+  //   this.service.sendMessage(outgoingMessage).subscribe();
+  // }
 }

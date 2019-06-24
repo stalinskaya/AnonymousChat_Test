@@ -8,11 +8,11 @@ namespace AnonChat.BLL.Interfaces
 {
     public interface IChatService
     {
-        Task AddChatAsync(string userid_1, string userid_2);
-        bool ExistChat(string userid_1, string userid_2);
-        Task AddChatMessageAsync(string userId, string content);
+        Task<bool> ExistChat(string userId, string receiverId);
+        ChatMessage AddChatMessageAsync(string userId, string message, string dialogId);
         Task<List<Chat>> FindAllDialogs(string userId);
+        Chat AddChat(string receiverId, string senderId);
         ChatMessage AddChatMessage(string userId, string message, string chatId);
-        Chat GetDialog(string chatId);
+        Task<Chat> GetDialog(string userId, string companionId);
     }
 }

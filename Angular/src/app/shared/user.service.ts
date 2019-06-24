@@ -75,6 +75,6 @@ export class UserService {
   postFile(fileToUpload: File) {
     const formData: FormData = new FormData();
     formData.append('Image', fileToUpload);
-    return this.http.put(this.BaseURI + '/user/EditPhoto', formData);
+    return this.http.post(this.BaseURI + '/user/EditPhoto', formData);
   }
 }

@@ -14,9 +14,9 @@ namespace AnonChat.Models
         public string LastName { get; set; }
         public DateTime BirthDay { get; set; }
         public string Gender { get; set; }
-        public virtual ICollection<UserChat> UserChats { get; set; }
+        public virtual ICollection<Chat> SentChats { get; set; }
+        public virtual ICollection<Chat> ReceivedChats { get; set; }
         public virtual ICollection<ChatMessage> SendedMessages { get; set; }
-        public virtual ICollection<ChatMessage> ReceivedMessages { get; set; }
         public bool StatusSearch { get; set; }
         public DateTime? StartSearch { get; set; }
 
@@ -25,9 +25,9 @@ namespace AnonChat.Models
         public virtual FileModel Photo { get; set; }
         public ApplicationUser()
         {
-            UserChats = new List<UserChat>();
+            SentChats = new List<Chat>();
+            ReceivedChats = new List<Chat>();
             SendedMessages = new List<ChatMessage>();
-            ReceivedMessages = new List<ChatMessage>();
         }
     }
 }

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 
 namespace AnonChat.UI.Controllers
 {
@@ -50,7 +51,7 @@ namespace AnonChat.UI.Controllers
         }
 
         [HttpPost("UserSearch")]
-        public async Task<Object> UserSearch([FromBody] SearchViewModel searchViewModel)
+        public async Task<string> UserSearch([FromBody] SearchViewModel searchViewModel)
         {
             var resultId = "";
             ApplicationUser user = await accountService.FindUserById(User.Claims.First(c => c.Type == "UserID").Value);
@@ -109,24 +110,9 @@ namespace AnonChat.UI.Controllers
                 }
                 isEnd = true;
             });
-            return resultId;
+            return JsonConvert.SerializeObject(resultId);
         }
-
-        [HttpGet("{userId}")]
-        public async Task<Object> GetUserProfile(string userId)
-        {
-            var user = await accountService.FindUserById(userId);
-            return new
-            {
-                user.FirstName,
-                user.LastName,
-                user.Email,
-                user.BirthDay,
-                user.Gender
-            };
-        }
-
-       
+               
 
         //GET: api/dialog/GetAllDialogs
         [HttpGet, Route("GetAllDialogs")]
@@ -142,12 +128,17 @@ namespace AnonChat.UI.Controllers
         }
 
         //GET: api/dialog/DialogDetails/id
-        [HttpGet, Route("DialogDetails/{id}")]
-        public IActionResult Get(string chatId)
+        [HttpGet, Route("DialogDetails/{userid}")]
+        public async Task<IActionResult> Get(string userId)
         {
-            var userId = User.Claims.First(c => c.Type == "UserID").Value;
-            var dialog = chatService.GetDialog(chatId);
-            var result = dialog.Messages.ToList();
+            var myId = User.Claims.First(c => c.Type == "UserID").Value;
+            if (await chatService.ExistChat(myId, userId) == false) chatService.AddChat(userId, myId);
+            var dialog = await chatService.GetDialog(myId, userId);
+            var result = dialog.Messages;
+            if (result == null)
+            {
+                return Ok("No messages yet");
+            }
             return Ok(result);
         }
 
@@ -161,7 +152,7 @@ namespace AnonChat.UI.Controllers
                 FindCallerReceiverByIds(model.ReceiverId, out caller, out receiver);
 
                 var newMessage = chatService.AddChatMessage(caller.userId, model.Message, model.ChatId);
-                var dialog = chatService.GetDialog(model.ChatId);
+                //var dialog = chatService.GetDialog(model.ChatId);
 
                 await chatHub.Clients.Client(caller.connId).SendAsync("SendMyself", newMessage);
 

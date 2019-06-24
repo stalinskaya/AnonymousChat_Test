@@ -55,19 +55,6 @@ namespace AnonChat.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Chats",
-                columns: table => new
-                {
-                    ChatID = table.Column<string>(nullable: false),
-                    StatusBlock = table.Column<int>(nullable: false),
-                    StatusAnonymity = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Chats", x => x.ChatID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "LogDetails",
                 columns: table => new
                 {
@@ -197,6 +184,33 @@ namespace AnonChat.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Chats",
+                columns: table => new
+                {
+                    ChatID = table.Column<string>(nullable: false),
+                    SenderId = table.Column<string>(nullable: true),
+                    ReceiverId = table.Column<string>(nullable: true),
+                    StatusBlock = table.Column<int>(nullable: false),
+                    StatusAnonymity = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Chats", x => x.ChatID);
+                    table.ForeignKey(
+                        name: "FK_Chats_AspNetUsers_ReceiverId",
+                        column: x => x.ReceiverId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Chats_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FileModels",
                 columns: table => new
                 {
@@ -224,10 +238,8 @@ namespace AnonChat.DAL.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Content = table.Column<string>(nullable: true),
-                    IsReaded = table.Column<int>(nullable: false),
                     SendingTime = table.Column<DateTime>(nullable: false),
                     SenderId = table.Column<string>(nullable: true),
-                    ReceiverId = table.Column<string>(nullable: true),
                     ChatId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -240,41 +252,11 @@ namespace AnonChat.DAL.Migrations
                         principalColumn: "ChatID",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_ChatMessages_AspNetUsers_ReceiverId",
-                        column: x => x.ReceiverId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
                         name: "FK_ChatMessages_AspNetUsers_SenderId",
                         column: x => x.SenderId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserChat",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(nullable: false),
-                    ChatId = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserChat", x => new { x.UserId, x.ChatId });
-                    table.ForeignKey(
-                        name: "FK_UserChat_Chats_ChatId",
-                        column: x => x.ChatId,
-                        principalTable: "Chats",
-                        principalColumn: "ChatID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserChat_AspNetUsers_ChatId",
-                        column: x => x.ChatId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -320,13 +302,18 @@ namespace AnonChat.DAL.Migrations
                 column: "ChatId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChatMessages_ReceiverId",
+                name: "IX_ChatMessages_SenderId",
                 table: "ChatMessages",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Chats_ReceiverId",
+                table: "Chats",
                 column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChatMessages_SenderId",
-                table: "ChatMessages",
+                name: "IX_Chats_SenderId",
+                table: "Chats",
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
@@ -334,11 +321,6 @@ namespace AnonChat.DAL.Migrations
                 table: "FileModels",
                 column: "ApplicationUserID",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserChat_ChatId",
-                table: "UserChat",
-                column: "ChatId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -366,9 +348,6 @@ namespace AnonChat.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "LogDetails");
-
-            migrationBuilder.DropTable(
-                name: "UserChat");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

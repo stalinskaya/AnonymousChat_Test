@@ -16,6 +16,7 @@ export class SearchComponent implements OnInit {
 
   selectedLevel;
   data = ["female", "male"];
+  userId;
 
   selected(){
     console.log(this.selectedLevel)
@@ -39,18 +40,16 @@ export class SearchComponent implements OnInit {
   const isFormValid = AgeMin.value< AgeMax.value;
   
   if(isFormValid) {
-    this.spinnerService.show();
-    setTimeout(() => {
       this.service.search().subscribe(
         (res: any) => {
-          this.spinnerService.hide();
-          //this.router.navigate(['dialog'], {queryParams: {userId: res}});
+          if (res == null) {
+            this.router.navigate(['home/search']);
+          }
+          this.router.navigateByUrl('/home/dialog-from-search/' + res);
         },
         err => {
-          this.spinnerService.hide();
           console.log(err);
-        }
-        )}, 32000);
+        });
     }
   }
 }

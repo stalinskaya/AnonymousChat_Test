@@ -17,13 +17,12 @@ export class ChatService {
         return this.http.get(this.BaseURI + '/chat/GetAllDialogs');
     }
 
-    getDetailsUserDialogs(id: number){
+    getDetailsUserDialogs(id: string){
         return this.http.get(this.BaseURI + '/chat/DialogDetails/' + id)
     }
 
     sendMessage(outgoingMessage: MessageInfo){
         console.log(outgoingMessage);
-        debugger;
         return this.http.post(this.BaseURI + '/chat/SendMessage', outgoingMessage);
     }
 }

@@ -17,5 +17,9 @@ export class HomeComponent implements OnInit {
   onProfile() {
     this.router.navigate(['/profile']);
   }
+  onLogout() {
+    localStorage.removeItem('token');
+    this.router.navigate(['/user/login']);
+  }
 }
 

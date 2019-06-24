@@ -15,67 +15,84 @@ namespace AnonChat.BLL.Services
     public class ChatService : IChatService
     {
         IUnitOfWork Database { get; set; }
-        private UserManager<ApplicationUser> UserManager;
+        private IAccountService accountService { get; set; }
 
-        public ChatService(IUnitOfWork Database, UserManager<ApplicationUser> UserManager) {
+        public ChatService(IUnitOfWork Database, IAccountService accountService) {
             this.Database = Database;
-            this.UserManager = UserManager;
+            this.accountService = accountService;
         }
 
-        public bool ExistChat(string userid_1, string userid_2)
+        public async Task<bool> ExistChat(string userId, string receiverId)
         {
-            var chat1 = Database.UserChats.Find(i => i.UserId == userid_1);
-            var chat2 = Database.UserChats.Find(i => i.UserId == userid_2);
-            return chat1.Intersect(chat2).Any();
+            var user = await accountService.FindUserById(userId);
+
+            var incomingDialogs = user.ReceivedChats.Where(x =>
+                x.ReceiverId == userId && x.SenderId == receiverId)
+                .ToList();
+
+            var outgoingDialogs = user.SentChats.Where(x =>
+                x.ReceiverId == receiverId && x.SenderId == userId)
+                .ToList();
+
+            var fullList = new List<Chat>();
+            fullList.AddRange(incomingDialogs);
+            fullList.AddRange(outgoingDialogs);
+
+            return fullList.Any();
         }
 
-        public async Task AddChatAsync(string userid_1, string userid_2)
+        public Chat AddChat (string receiverId, string senderId)
         {
-            var user1 = await UserManager.FindByIdAsync(userid_1);
-            var user2 = await UserManager.FindByIdAsync(userid_2);
-            var chat = new Chat
+            var newDialog = new Chat
             {
-                ChatID = "Anonymous chat:" + DateTimeOffset.Now,
+                ChatID = "AnonymousChat: " + DateTimeOffset.Now,
+                SenderId = senderId,
+                ReceiverId = receiverId,
                 StatusAnonymity = true,
                 StatusBlock = false
             };
-            Database.Chats.Create(chat);
+
+            Database.Chats.Create(newDialog);
             Database.Save();
 
-            var userChat1 = new UserChat
-            {
-                User = user1,
-                Chat = chat
-            };
-            Database.UserChats.Create(userChat1);
-            Database.Save();
-
-            var userChat2 = new UserChat
-            {
-                User = user2,
-                Chat = chat
-            };
-            Database.UserChats.Create(userChat2);
-            Database.Save();
+            return newDialog;
         }
-
-        public async Task AddChatMessageAsync(string userId,  string content)
+        public ChatMessage AddChatMessageAsync(string userId, string message, string dialogId)
         {
-            var sender = await UserManager.FindByIdAsync(userId);
-            var message = new ChatMessage
+            try
             {
-                Sender = sender,
-                Content = content,
-                SendingTime = DateTime.Now
-            };
-            Database.ChatMessages.Create(message);
-            Database.Save();
+                var newMessage = new ChatMessage
+                {
+                    SenderId = userId,
+                    ChatId = dialogId,
+                    Content = message,
+                    SendingTime = DateTime.Now
+                };
+
+               Database.ChatMessages.Create(newMessage);
+               Database.Save();
+               return newMessage;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public async Task<List<Chat>> FindAllDialogs(string userId)
         {
-            var user = await UserManager.FindByIdAsync(userId);
-            var chats = Database.UserChats.Find(i => i.UserId == userId).Select(d=>d.Chat).ToList();
+            var user = await accountService.FindUserById(userId);
+
+            var incomingDialogs = user.ReceivedChats.Where(x =>
+                x.ReceiverId == userId).ToList();
+
+            var outgoingDialogs = user.SentChats.Where(x =>
+                x.SenderId == userId).ToList();
+
+            var chats = new List<Chat>();
+            chats.AddRange(incomingDialogs);
+            chats.AddRange(outgoingDialogs);
+
             return chats;
         }
 
@@ -95,18 +112,25 @@ namespace AnonChat.BLL.Services
             return newMessage;
         }
         
-        public Chat GetDialog(string chatId)
+        public async Task<Chat> GetDialog(string userId, string companionId)
         {
-            try
-            {
-                var chat = Database.Chats.Find(i => i.ChatID == chatId).FirstOrDefault() ;
+            var user = await accountService.FindUserById(userId);
 
-                return chat;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            var incomingDialogs = user.ReceivedChats.Where(x =>
+                    x.ReceiverId == userId && x.SenderId == companionId)
+                .ToList();
+
+            var outgoingDialogs = user.SentChats.Where(x =>
+                    x.ReceiverId == companionId && x.SenderId == userId)
+                .ToList();
+
+            var fullList = new List<Chat>();
+            fullList.AddRange(incomingDialogs);
+            fullList.AddRange(outgoingDialogs);
+
+            var result = fullList.First();
+
+            return result;
         }
     }
 }
