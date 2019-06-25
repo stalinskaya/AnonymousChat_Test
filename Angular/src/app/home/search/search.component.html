@@ -1,4 +1,4 @@
-<div class="card m-5" style="width:18rem">
+<div class="col-sm-5" style="float: left; margin: 1% 10%; border: 1px solid lightgrey; padding: 20px">
   <form [formGroup]="service.formModel" autocomplete="off" (submit)="onSubmit()">
     <div class="form-group">  
       <label> Select Gender </label>  
@@ -14,10 +14,8 @@
       <label>Age (max)</label>
       <input class="form-control" formControlName="AgeMax">
     </div>
-    <div class="form-row">
-      <div class="form-group col-md-8 offset-md-2">
-        <button (ngSubmit)=onSubmit() class="btn btn-lg">Искать</button>
+      <div class="form-group">
+        <button (ngSubmit)=onSubmit() class="btn btn-lg btn-block">Искать</button>
       </div>
-    </div>
   </form>
 </div>

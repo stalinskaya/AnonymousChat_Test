@@ -15,7 +15,7 @@ export class SearchComponent implements OnInit {
   constructor(private router: Router, private service: SearchService, private toastr: ToastrService, private spinnerService: Ng4LoadingSpinnerService) { }
 
   selectedLevel;
-  data = ["female", "male"];
+  data = ["female", "male", "no matter"];
   userId;
 
   selected(){
@@ -42,8 +42,8 @@ export class SearchComponent implements OnInit {
   if(isFormValid) {
       this.service.search().subscribe(
         (res: any) => {
-          if (res == null) {
-            this.router.navigate(['home/search']);
+          if (res == "") {
+            this.router.navigate(['home/search/']);
           }
           this.router.navigateByUrl('/home/dialog-from-search/' + res);
         },

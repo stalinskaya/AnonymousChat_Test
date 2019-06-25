@@ -10,8 +10,8 @@ namespace AnonChat.Models
         public DateTime SendingTime { get; set; }
 
         [ForeignKey("ApplicationUser")]
-        public string SenderId { get; set; }
-        public virtual ApplicationUser Sender { get; set; }
+        public string ReceiverId { get; set; }
+        public virtual ApplicationUser Reciever { get; set; }
         [ForeignKey("Chat")]
         public string ChatId { get; set; }
         public virtual Chat Chat { get; set; }

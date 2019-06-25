@@ -14,10 +14,6 @@ namespace AnonChat.Models
         [ForeignKey("ApplicationUser")]
         public string ApplicationUserID { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
-
-        //[ForeignKey("ChatMessage")]
-        //public int? ChatMessageId { get; set; }
-        //public virtual ChatMessage ChatMessage { get; set; }
         public string Name { get; set; }
         public string Path { get; set; }
     }

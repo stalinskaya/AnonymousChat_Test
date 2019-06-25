@@ -6,6 +6,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { Ng4LoadingSpinnerModule} from 'ng4-loading-spinner';
+import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,7 +16,7 @@ import { UserService } from './shared/user.service';
 import { LoginComponent } from './user/login/login.component';
 import { HomeComponent } from './home/home.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
-import { ProfileComponent } from './profile/profile.component';
+import { ProfileComponent } from './home/profile/profile.component';
 import { SearchComponent } from './home/search/search.component';
 import { ChatsComponent } from './home/chats/chats.component';
 import { DialogComponent } from './home/chats/dialog/dialog.component';
@@ -49,6 +50,7 @@ import { DialogFromSearchComponent } from './home/dialog-from-search/dialog-from
     BrowserAnimationsModule,
     NgbModule,
     Ng4LoadingSpinnerModule.forRoot(),
+    CommonModule
     
   ],
   exports: [

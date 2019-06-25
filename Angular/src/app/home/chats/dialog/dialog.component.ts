@@ -69,7 +69,6 @@ export class DialogComponent implements OnInit {
 
   onSendMessage() {
     var outgoingMessage  = new MessageInfo();
-    outgoingMessage.DialogId = this.dialogId;
     outgoingMessage.ReceiverId = this.userId;
     outgoingMessage.Message = this.message;
 

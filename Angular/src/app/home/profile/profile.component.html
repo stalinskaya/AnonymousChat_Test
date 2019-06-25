@@ -1,17 +1,10 @@
-<nav class="navbar navbar-dark bg-dark">
-  <a class="navbar-brand text-white" (click)="onProfile()">Anonymous Chat</a>
-  <div class="col-sm-5 text-right">
-    <button class="btn btn-danger" (click)="onProfile()">My Profile</button>
-    <button class="btn btn-danger ml-1" (click)="onLogout()">Logout</button>
-  </div>
-</nav>
 <div class="row">
-    <div class="col-sm" *ngIf="visibleDetailsUser">
+    <div style="margin: 1% 0 10% 10%" *ngIf="visibleDetailsUser">
       <label class="hoverable" *ngIf="userDetails">
         <img src="https://localhost:44355{{userDetails.Photo}} ? https://localhost:44355{{userDetails.Photo}} : 'https://www.w3schools.com/howto/img_avatar.png'">
       </label>
     </div>
-    <div class="col-sm" *ngIf="!visibleDetailsUser">
+    <div style="margin: 1% 0 10% 10%" *ngIf="!visibleDetailsUser">
       <div class="user-profile-picture">
           <form #imageForm=ngForm (ngSubmit)="onChangeImage(Image)">
             <div>
@@ -24,20 +17,20 @@
           </form>
         </div>
     </div>
-  <div class="col-sm" *ngIf="visibleDetailsUser">
-    <div style="width: 80%" *ngIf="userDetails">
+  <div style="margin: 1% 0 10% 10%" *ngIf="visibleDetailsUser">
+    <div *ngIf="userDetails">
       <ul class="list-group">
         <li class="list-group-item"><strong>FirstName : </strong>{{userDetails.firstName}}</li>
         <li class="list-group-item"><strong>LastName : </strong>{{userDetails.lastName}}</li>
         <li class="list-group-item"><strong>Gender : </strong>{{userDetails.gender}}</li>
-        <li class="list-group-item"><strong>Birthday : </strong>{{userDetails.birthday | date:'MMM d, y, h:mm:ss a' }}</li>
+        <li class="list-group-item"><strong>Birthday : </strong>{{userDetails.birthday | date:'yyyy-MM-dd'}}</li>
         <li class="list-group-item"><strong>Email : </strong>{{userDetails.email}}</li>
       </ul>
       <button type="button" class="btn btn-outline-danger btn-block" (click)="onEditUser()" style="margin-top: 2%;">Change Info</button> 
     </div>
   </div>
-  <div class="col-sm" *ngIf="!visibleDetailsUser">
-    <div style="width: 80%" *ngIf="userDetails">
+  <div style="margin: 1% 0 10% 10%" *ngIf="!visibleDetailsUser">
+    <div *ngIf="userDetails">
       <form [formGroup]="service.editModel" autocomplete="off" (submit)="onSubmit()">
         <div class="form-group required">
           <label>FirstName</label>

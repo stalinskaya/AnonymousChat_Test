@@ -57,14 +57,14 @@ namespace AnonChat.BLL.Services
 
             return newDialog;
         }
-        public ChatMessage AddChatMessageAsync(string userId, string message, string dialogId)
+        public ChatMessage AddChatMessage (string userId, string message, string chatId)
         {
             try
             {
                 var newMessage = new ChatMessage
                 {
-                    SenderId = userId,
-                    ChatId = dialogId,
+                    ReceiverId = userId,
+                    ChatId = chatId,
                     Content = message,
                     SendingTime = DateTime.Now
                 };
@@ -95,23 +95,7 @@ namespace AnonChat.BLL.Services
 
             return chats;
         }
-
-        public ChatMessage AddChatMessage(string userId, string message, string chatId/*, IFormFileCollection files*/)
-        {
-            
-            var newMessage = new ChatMessage
-            {
-                SenderId = userId,
-                ChatId = chatId,
-                Content = message,
-                SendingTime = DateTime.Now
-            };
-
-            Database.ChatMessages.Create(newMessage);
-            Database.Save();
-            return newMessage;
-        }
-        
+                
         public async Task<Chat> GetDialog(string userId, string companionId)
         {
             var user = await accountService.FindUserById(userId);

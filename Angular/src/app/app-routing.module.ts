@@ -6,7 +6,7 @@ import { UserComponent } from './user/user.component';
 import { RegistrationComponent } from './user/registration/registration.component';
 import { LoginComponent } from './user/login/login.component';
 import { HomeComponent } from './home/home.component';
-import { ProfileComponent } from './profile/profile.component';
+import { ProfileComponent } from './home/profile/profile.component';
 import { SearchComponent } from './home/search/search.component';
 import { ChatsComponent } from './home/chats/chats.component';
 import { DialogComponent } from './home/chats/dialog/dialog.component';
@@ -25,6 +25,7 @@ const routes: Routes = [
   {
     path:'home',component: HomeComponent , canActivate:[AuthGuard],
     children: [
+      {path:'profile',component:ProfileComponent, canActivate:[AuthGuard]},
       {path: 'search', component: SearchComponent, canActivate:[AuthGuard]},
       {path: 'dialog-from-search/:userId', component: DialogFromSearchComponent},
       {path: 'chats', component: ChatsComponent, canActivate:[AuthGuard],
@@ -34,8 +35,7 @@ const routes: Routes = [
       },
       { path: 'user-profile', component: UserProfileComponent, canActivate:[AuthGuard] }
     ]
-  },
-  {path:'profile',component:ProfileComponent, canActivate:[AuthGuard]}
+  }
 ];
 
 @NgModule({

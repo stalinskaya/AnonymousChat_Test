@@ -1,7 +1,8 @@
-import { UserService } from './../shared/user.service';
+import { UserService } from '../../shared/user.service';
 import { Component, OnInit, RootRenderer } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-profile',
@@ -13,10 +14,10 @@ export class ProfileComponent implements OnInit {
   selectedFile = null;
   visibleDetailsUser = true;
 
-  constructor(private route: Router, private service: UserService, private toastr: ToastrService) { console.log(this.route); }
+  constructor(private router: Router, private service: UserService, private toastr: ToastrService) {}
 
   selectedLevel;
-  data = ["female", "male", "no matter" ];
+  data = ["female", "male"];
 
   selected(){
     console.log(this.selectedLevel)
@@ -33,7 +34,7 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  imageUrl: string = "/assets/img/add.jpg";
+  imageUrl: string = "assets\img\single_user.png";
   fileToUpload: File = null;
 
   handleFileInput(file: FileList) {
@@ -80,12 +81,12 @@ export class ProfileComponent implements OnInit {
     )
   }
   
-
-
+  onProfile() {
+    this.router.navigate(['/profile']);
+  }
   onLogout() {
     localStorage.removeItem('token');
-    //this.route.url(['/user/login']);
+    this.router.navigate(['/user/login']);
   }
-
 }
 

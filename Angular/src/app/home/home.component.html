@@ -1,9 +1,15 @@
 <router-outlet>
   <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand text-white">Anonymous Chat</a>
+    <a class="navbar-brand text-white" style= "margin-left: 30px">Anonymous Chat</a>
     <div class="col-sm-5 text-right">
-      <button class="btn btn-danger" (click)="onProfile()">My Profile</button>
-      <button class="btn btn-danger ml-1" (click)="onLogout()">Logout</button>
+      <button class="btn btn-primary ml-1" (click)="onLogout()">Logout</button>
     </div>
   </nav>
+  <div class="col-sm-2" style= "margin: 20px; float:left">
+    <button class="btn btn-primary ml-1 btn-block" (click)="onHome()">Home</button>
+    <button class="btn btn-primary ml-1 btn-block" (click)="onProfile()">My Profile</button>
+    <button class="btn btn-primary ml-1 btn-block" (click)="onSearch()">Search</button>
+    <button class="btn btn-primary ml-1 btn-block" (click)="onChats()">My Chats</button>
+  </div>
 </router-outlet>
+    

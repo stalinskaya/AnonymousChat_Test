@@ -12,7 +12,7 @@ export class ChatService {
         private http: HttpClient) { }
 
     readonly BaseURI = 'https://localhost:44355/api';
-
+    
     getUserDialogs() {
         return this.http.get(this.BaseURI + '/chat/GetAllDialogs');
     }

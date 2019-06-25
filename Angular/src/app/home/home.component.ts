@@ -13,9 +13,18 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
   }
-
+  
+  onHome() {
+    this.router.navigate(['/home']);
+  }
+  onSearch() {
+    this.router.navigate(['/home/search']);
+  }
   onProfile() {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['home/profile']);
+  }
+  onChats() {
+    this.router.navigate(['home/chats']);
   }
   onLogout() {
     localStorage.removeItem('token');

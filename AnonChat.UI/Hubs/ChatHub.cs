@@ -35,7 +35,7 @@ namespace AnonChat.BLL.Hubs
 
         public async override Task OnConnectedAsync()
         {
-            var callerId = await accountService.FindIdByEmail(Context.User.Identity.Name);
+            var callerId = Context.User.Claims.First(c => c.Type == "UserID").Value;
             UpdateList(callerId);
             await base.OnConnectedAsync();
         }
@@ -84,11 +84,6 @@ namespace AnonChat.BLL.Hubs
             else {
                 usersList.Add(new UserIds { connId = Context.ConnectionId, userId = callerId });
             }
-        }
-        void FindCallerReceiverByIds(string receiverId, out UserIds caller, out UserIds receiver)
-        {
-            receiver = usersList.Find(i => i.userId == receiverId);
-            caller = usersList.Find(i => i.connId == Context.ConnectionId);
         }
     }
 }

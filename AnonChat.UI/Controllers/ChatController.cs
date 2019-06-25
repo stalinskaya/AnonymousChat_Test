@@ -89,7 +89,7 @@ namespace AnonChat.UI.Controllers
                         .WithDegreeOfParallelism(Environment.ProcessorCount)
                         .Where(u => EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) >= u.age_min &&
                                                    EF.Functions.DateDiffYear(searchline.user.BirthDay, DateTime.Today) <= u.age_max &&
-                                                   u.gender == searchline.user.Gender &&
+                                                   (u.gender == searchline.user.Gender) || (u.gender == "no matter") &&
                                                    EF.Functions.DateDiffSecond(u.searchStart, DateTime.Now) <= numberOfSecondsToWait
                                                    && u.user.Id != searchline.user.Id);
 
@@ -99,7 +99,7 @@ namespace AnonChat.UI.Controllers
                             //Выбираем из юзеров, которые искали нас тех, кого мы ищем
                             full_match = searchingRightNow.Where(u => EF.Functions.DateDiffYear(u.user.BirthDay, DateTime.Today) >= searchline.age_min &&
                                                                       EF.Functions.DateDiffYear(u.user.BirthDay, DateTime.Today) <= searchline.age_max &&
-                                                                      searchline.gender == u.user.Gender)
+                                                                      (searchline.gender == u.user.Gender) || (searchline.gender == "no matter"))
                                                                       .ToList();
                         }
 
@@ -155,6 +155,18 @@ namespace AnonChat.UI.Controllers
             return Ok(dialogs);
         }
 
+        [HttpGet("GetChat/{companionId}")]
+        //GET : /api/UserProfile
+        public Object GetChat(string companionId)
+        {
+            string userId = User.Claims.First(c => c.Type == "UserID").Value;
+            return new
+            {
+                userId,
+                companionId
+            };
+        }
+
         //GET: api/dialog/DialogDetails/id
         [HttpGet, Route("DialogDetails/{userid}")]
         public async Task<IActionResult> Get(string userId)
@@ -172,26 +184,25 @@ namespace AnonChat.UI.Controllers
 
         //POST: api/dialog/SendMessage
         [HttpPost, Route("SendMessage")]
-        public async Task<IActionResult> SendMessage([FromBody] SendMessageViewModel model)
+        public async Task<IActionResult> SendMessage([FromBody] SendFirstMessageViewModel sendMessageViewModel)
         {
             try
             {
                 UserIds receiver, caller;
-                FindCallerReceiverByIds(model.ReceiverId, out caller, out receiver);
-
-                var newMessage = chatService.AddChatMessage(caller.userId, model.Message, model.ChatId);
-                //var dialog = chatService.GetDialog(model.ChatId);
-
-                await chatHub.Clients.Client(caller.connId).SendAsync("SendMyself", newMessage);
-
-                if (receiver != null)
+                FindCallerReceiverByIds(sendMessageViewModel.ReceiverId, out caller, out receiver);
+                bool chatExist = await chatService.ExistChat(caller.userId, sendMessageViewModel.ReceiverId);
+                if (chatExist)
                 {
-                    await chatHub.Clients.Client(receiver.connId)
-                        .SendAsync("Send", newMessage, caller.userId);
-
-                    //await Clients.Client(receiver.ConnId).SendAsync("SoundNotify", "");
+                    var chat = await chatService.GetDialog(caller.userId, sendMessageViewModel.ReceiverId);
+                    var newMessage = chatService.AddChatMessage(caller.userId, sendMessageViewModel.Message, chat.ChatID);
+                    await chatHub.Clients.Client(receiver.connId).SendAsync("Send", sendMessageViewModel.Message, caller.userId);
                 }
-
+                else
+                {
+                    var chat = chatService.AddChat(sendMessageViewModel.ReceiverId, caller.userId);
+                    var newMessage = chatService.AddChatMessage(caller.userId, sendMessageViewModel.Message, chat.ChatID);
+                    await chatHub.Clients.Client(receiver.connId).SendAsync("Send", sendMessageViewModel.Message, caller.userId);
+                }
                 return Ok();
             }
             catch (Exception e)

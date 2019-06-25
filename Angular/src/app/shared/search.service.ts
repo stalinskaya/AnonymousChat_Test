@@ -23,8 +23,7 @@ export class SearchService {
     };
     return this.http.post(this.BaseURI + '/chat/UserSearch', body);
   }
-  getUserChat(id) {
-    return this.http.get(this.BaseURI + '/chat/DialogDetails/', id);
+  getUserChat(userId: string) {
+    return this.http.get(this.BaseURI + '/chat/GetChat/' + userId);
   }
-  
 }

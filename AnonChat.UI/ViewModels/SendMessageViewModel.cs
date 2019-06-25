@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AnonChat.UI.ViewModels
 {
-    public class SendMessageViewModel
+    public class SendFirstMessageViewModel
     {
         [Required]
         [Display(Name = "Message")]
@@ -15,9 +15,5 @@ namespace AnonChat.UI.ViewModels
         [Required]
         [Display(Name = "ReceiverId")]
         public string ReceiverId { get; set; }
-
-        [Required]
-        [Display(Name = "ChatID")]
-        public string ChatId { get; set; }
     }
 }
